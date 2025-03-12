@@ -1,14 +1,14 @@
 from django.db import models
 
-# Create your models here.
 
-class User(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    isManager = models.BooleanField()
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    isManager = models.BooleanField(default=False)
+
 
     def __str__(self):
-        return self.name
+        return self.username
 
 class Cuisine(models.Model):
 
@@ -36,7 +36,7 @@ class Booking(models.Model):
     time = models.TimeField()
 
     def __str__(self):
-        return self.user.name + self.date + self.time
+        return self.user.username + self.date + self.time
     
 
 
@@ -50,7 +50,7 @@ class Review(models.Model):
     review_date = models.DateField()
 
     def __str__(self):
-        return self.user.name
+        return self.user.username
 
 class StandardHours(models.Model):  
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)

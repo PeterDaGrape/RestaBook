@@ -8,12 +8,12 @@ from app.models import User, Cuisine, Restaurant, Booking, Review, StandardHours
 
 def populate():
     # Create test users
-    user1 = User.objects.create(name='John Doe', email='john@example.com', isManager=False)
-    user2 = User.objects.create(name='Jane Smith', email='jane@example.com', isManager=False)
+    user1 = User.objects.create_user(username='john_doe', email='john@example.com', password='password', isManager=False)
+    user2 = User.objects.create_user(username='jane_smith', email='jane@example.com', password='password', isManager=False)
     
     # Create managers
-    manager1 = User.objects.create(name='Alice Manager', email='alice@example.com', isManager=True)
-    manager2 = User.objects.create(name='Bob Manager', email='bob@example.com', isManager=True)
+    manager1 = User.objects.create_user(username='alice_manager', email='alice@example.com', password='password', isManager=True)
+    manager2 = User.objects.create_user(username='bob_manager', email='bob@example.com', password='password', isManager=True)
     
     # Create cuisines
     cuisine1 = Cuisine.objects.create(name='Italian')
