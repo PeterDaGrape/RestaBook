@@ -103,6 +103,7 @@ def user_login(request):
 
 def index(request):
     restaurant_list = Restaurant.objects.all()[:5]
+    print(restaurant_list)
     context_dict = {}
     context_dict['restaurants'] = restaurant_list
     response = render(request, 'app/index.html', context=context_dict)
@@ -127,6 +128,13 @@ def about(request):
 
     return render(request, 'app/about.html', context=context_dict)
 
+def show_restaurants(request):
+    restaurant_list = Restaurant.objects.all()
+    print(restaurant_list)
+    context_dict = {}
+    context_dict['restaurants'] = restaurant_list
+    response = render(request, 'app/restaurants.html', context=context_dict)
+    return response
 
 def show_restaurant(request, restaurant_slug):
     # Create a context dictionary which we can pass
