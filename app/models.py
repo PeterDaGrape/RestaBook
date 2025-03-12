@@ -7,9 +7,14 @@ class User(models.Model):
     email = models.CharField(max_length=255)
     isManager = models.BooleanField()
 
+    def __str__(self):
+        return self.name
+
 class Cuisine(models.Model):
 
     name = models.CharField(max_length=32)
+    def __str__(self):
+        return self.name
 
 class Restaurant(models.Model):
     cuisine = models.ForeignKey(Cuisine, on_delete=models.CASCADE)
@@ -20,6 +25,8 @@ class Restaurant(models.Model):
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
 
+    def __str__(self):
+        return self.name
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -28,14 +35,22 @@ class Booking(models.Model):
     date = models.DateField()
     time = models.TimeField()
 
+    def __str__(self):
+        return self.user.name + self.date + self.time
+    
+
+
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
     star_rating = models.IntegerField()
-    text = models.CharField()
+    text = models.CharField(max_length=255)
 
     review_date = models.DateField()
+
+    def __str__(self):
+        return self.user.name
 
 class StandardHours(models.Model):  
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
@@ -46,6 +61,9 @@ class StandardHours(models.Model):
     is_open = models.BooleanField()
     week_day = models.IntegerField()
 
+    def __str__(self):
+        return self.restaurant + self.week_day + self.is_open
+
 
 class CustomHours(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
@@ -55,3 +73,6 @@ class CustomHours(models.Model):
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     date = models.DateField()
+
+    def __str__(self):
+        return self.restaurant + self.is_open + self.date
