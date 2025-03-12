@@ -1,13 +1,12 @@
 {% extends 'app/base.html' %}
 
 {% block title_block %}
-    Homepage
+    Restaurants
 {% endblock %}
 
 {% block body_block %}
 
-    <h1>RestaBook</h1>
-
+    <h1>All restaurants</h1>
     <ul>
         {% if restaurants %}
             {% for restaurant in restaurants %}
@@ -23,3 +22,4 @@
         {% endif %}
     </ul>
 {% endblock %}
+

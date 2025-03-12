@@ -1,0 +1,16 @@
+{% extends 'app/base.html' %}
+
+{% block title_block %}
+    {{ name }}
+{% endblock %}
+
+{% block body_block %}
+
+    <h1> {{ name }}</h1>
+    Phone number: {{ phone }}
+    Email: {{ email }}
+    {% if address %}    
+        Address: {{ address }}
+    {% endif %}
+
+{% endblock %}

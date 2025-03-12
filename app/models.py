@@ -1,6 +1,6 @@
 from django.db import models
 
-
+from django.template.defaultfilters import slugify
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
@@ -20,10 +20,16 @@ class Restaurant(models.Model):
     cuisine = models.ForeignKey(Cuisine, on_delete=models.CASCADE)
     manager = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    slug = models.SlugField(unique=True)
+    
     name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Restaurant, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
