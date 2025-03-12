@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from django.http import HttpResponseForbidden
 from app.forms import UserProfileForm, UserForm
-from app.models import Restaurant
+from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+
+
 def register(request):
     # A boolean value for telling the template
     # whether the registration was successful.
@@ -135,6 +137,32 @@ def show_restaurants(request):
     context_dict['restaurants'] = restaurant_list
     response = render(request, 'app/restaurants.html', context=context_dict)
     return response
+
+@login_required
+def manage_restaurant(request, restaurant_slug):
+
+    print(request.user.is_superuser)
+    if not (request.user.isManager or request.user.is_superuser):
+
+        return HttpResponseForbidden("You are not authorized to access this page.")
+    
+    
+    restaurant = Restaurant.objects.get(slug=restaurant_slug)
+
+
+    bookings = Booking.objects.filter(restaurant=restaurant)
+    custom_hours = CustomHours.objects.filter(restaurant=restaurant)
+    standard_hours = StandardHours.objects.filter(restaurant=restaurant)
+    
+    
+    context = {
+        'restaurant' : restaurant,
+        'bookings': bookings,
+        'custom_hours': custom_hours,
+        'standard_hours': standard_hours,
+    }
+    
+    return render(request, 'app/manage_restaurant.html', context)
 
 def show_restaurant(request, restaurant_slug):
     # Create a context dictionary which we can pass
