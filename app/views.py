@@ -126,3 +126,28 @@ def about(request):
 
 
     return render(request, 'app/about.html', context=context_dict)
+
+
+def show_restaurant(request, restaurant_slug):
+    # Create a context dictionary which we can pass
+    # to the template rendering engine.
+    context_dict = {}
+    try:
+        # Can we find a category name slug with the given name?
+        # If we can't, the .get() method raises a DoesNotExist exception.
+        # The .get() method returns one model instance or raises an exception.
+        restaurant = Restaurant.objects.get(slug=restaurant_slug)
+        # Retrieve all of the associated pages.
+        # The filter() will return a list of page objects or an empty list.
+        # Adds our results list to the template context under name pages.
+        # We also add the category object from
+        # the database to the context dictionary.
+        # We'll use this in the template to verify that the category exists.
+    except Restaurant.DoesNotExist:
+        pass
+        # We get here if we didn't find the specified category.
+        # Don't do anything -
+        # the template will display the "no category" message for us.
+
+    # Go render the response and return it to the client.
+    return render(request, 'app/restaurant.html', context=context_dict)
