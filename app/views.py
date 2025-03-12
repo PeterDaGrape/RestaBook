@@ -137,6 +137,11 @@ def show_restaurant(request, restaurant_slug):
         # If we can't, the .get() method raises a DoesNotExist exception.
         # The .get() method returns one model instance or raises an exception.
         restaurant = Restaurant.objects.get(slug=restaurant_slug)
+        context_dict['name'] = restaurant.name
+        context_dict['cuisine'] = restaurant.cuisine
+        context_dict['email'] = restaurant.email
+        context_dict['phone'] = restaurant.phone
+
         # Retrieve all of the associated pages.
         # The filter() will return a list of page objects or an empty list.
         # Adds our results list to the template context under name pages.

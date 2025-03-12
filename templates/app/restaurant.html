@@ -1,11 +1,16 @@
 {% extends 'app/base.html' %}
 
 {% block title_block %}
-    Homepage
+    {{ name }}
 {% endblock %}
 
 {% block body_block %}
 
-    <h1>You're here</h1>
+    <h1> {{ name }}</h1>
+    Phone number: {{ phone }}
+    Email: {{ email }}
+    {% if address %}    
+        Address: {{ address }}
+    {% endif %}
 
 {% endblock %}
