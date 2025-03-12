@@ -10,3 +10,6 @@ def index(request):
     context_dict['restaurants'] = restaurant_list
     response = render(request, 'restabook/index.html', context=context_dict)
     return response
+
+def about(request):
+    return render(request, 'restabook/about.html')
