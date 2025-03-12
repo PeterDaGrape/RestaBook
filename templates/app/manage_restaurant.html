@@ -1,0 +1,30 @@
+{% extends 'app/base.html' %}
+
+{% block title_block %}
+    Manager Admin
+{% endblock %}
+
+{% block body_block %}
+    <h1>Manager Admin Page for {{ restaurant }}</h1>
+    
+    <h2>Bookings</h2>
+    <ul>
+        {% for booking in bookings %}
+            <li>{{ booking }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Custom Hours</h2>
+    <ul>
+        {% for custom_hour in custom_hours %}
+            <li>{{ custom_hour }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Standard Hours</h2>
+    <ul>
+        {% for standard_hour in standard_hours %}
+            <li>{{ standard_hour }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

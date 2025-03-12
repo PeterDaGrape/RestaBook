@@ -42,7 +42,7 @@ class Booking(models.Model):
     time = models.TimeField()
 
     def __str__(self):
-        return self.user.username + self.date + self.time
+        return self.user.username + " " + str(self.date) + " " + str(self.time)
     
 
 
@@ -68,7 +68,8 @@ class StandardHours(models.Model):
     week_day = models.IntegerField()
 
     def __str__(self):
-        return self.restaurant + self.week_day + self.is_open
+        return self.restaurant + " " + str(self.week_day) + " " + str(self.is_open) 
+
 
 
 class CustomHours(models.Model):
@@ -81,4 +82,5 @@ class CustomHours(models.Model):
     date = models.DateField()
 
     def __str__(self):
-        return self.restaurant + self.is_open + self.date
+
+        return self.restaurant + " " + str(self.date) + " " + str(self.is_open) 
