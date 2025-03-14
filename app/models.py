@@ -48,19 +48,13 @@ class Booking(models.Model):
     
     people_count = models.IntegerField(default=1)
     
-    def clean (self):
+    def save(self, *args, **kwargs):
         if self.people_count > 4:
-            raise ValidationError("A booking cannot have more than 4 people")
-        
-        # Check if the total number of bookings at the restaurant exceeds the max capacity
-        bookings_at_time = Booking.objects.filter(restaurant=self.restaurant, date=self.date, time=self.time)
-        total_people_at_time = sum(booking.people_count for booking in bookings_at_time)
-        
-        if total_people_at_time + self.people_count > self.restaurant.max_capacity:
-            raise ValidationError(f"The restaurant's capacity is exceeded for this time. Max capacity is {self.restaurant.max_capacity}.")
+            raise ValueError("A booking cannot exceed 4 people.")
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.user.username + " " + str(self.date) + " " + str(self.time)
+        return f"{self.user.username} booked at {self.restaurant.name} on {self.date} at {self.time}"
     
 
 
