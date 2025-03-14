@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (!isValid) {
         event.preventDefault();
-        displayFormError("Please correct the errors in the form.");
+        displayFormError("please correct the errors in the form.");
       }
     });
   });
