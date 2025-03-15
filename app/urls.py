@@ -5,6 +5,7 @@ app_name = 'app'
 urlpatterns = [
     path('', views.index, name='index'),
     path('restaurants/<slug:restaurant_slug>/', views.show_restaurant,name='show_restaurant'),
+    path('restaurants/<slug:restaurant_slug>/book_table', views.book_table,name='book_table'),
     path('restaurants/<slug:restaurant_slug>/manage', views.manage_restaurant,name='manage_restaurant'),
     path('restaurants/<slug:restaurant_slug>/manage/add_standard_hours', views.add_standard_hours,name='add_standard_hours'),
     path('restaurants/<slug:restaurant_slug>/manage/add_custom_hours', views.add_custom_hours,name='add_custom_hours'),
