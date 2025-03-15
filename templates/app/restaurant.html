@@ -13,5 +13,12 @@
         Address: {{ address }}
     {% endif %}
 
+    <div>
+        {% if site_manager %}
+            <li><a href="{{ request.path }}manage">Manager edit</a></li>
+        {% endif %}
+    </div>
+
+
     <a href="{% url 'app:book_table' restaurant_slug=restaurant.slug %}">Book a Table</a>
 {% endblock %}

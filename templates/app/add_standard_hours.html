@@ -1,0 +1,16 @@
+{% extends 'app/base.html' %}
+
+{% block title_block %}
+    Add Standard Hours
+{% endblock %}
+
+{% block body_block %}
+<div class="form-container">
+    <h1 class="form-title">Add Standard Hours for {{ restaurant.name }}</h1>
+    <form method="post" action="{% url 'app:add_standard_hours' restaurant.slug %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save Changes">
+    </form>
+</div>
+{% endblock %}
