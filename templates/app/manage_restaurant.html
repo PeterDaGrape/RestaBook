@@ -22,6 +22,7 @@
     </ul>
     
     <h2>Custom Hours</h2>
+        <a href="{{ request.path }}/add_custom_hours">Add</a>
     <ul>
         {% for custom_hour in custom_hours %}
             <li>{{ custom_hour }}</li>
@@ -29,7 +30,7 @@
     </ul>
     
     <h2>Standard Hours</h2>
-        <li><a href="{{ request.path }}/add_standard_hours">Manager edit</a></li>
+        <a href="{{ request.path }}/add_standard_hours">Add</a>
     <ul>
         {% for standard_hour in standard_hours %}
             <li>{{ standard_hour }}</li>

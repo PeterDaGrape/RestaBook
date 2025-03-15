@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm
+from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -197,7 +197,30 @@ def add_standard_hours(request, restaurant_slug):
 
     return render(request, 'app/add_standard_hours.html', context)
 
-    
+@login_required
+def add_custom_hours(request, restaurant_slug):
+    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
+
+    if not (request.user.isManager or request.user.is_superuser):
+        return HttpResponseForbidden("You are not authorized to access this page.")
+
+    if request.method == 'POST':
+        form = CustomHoursForm(request.POST)
+        if form.is_valid():
+            custom_hours = form.save(commit=False)
+            custom_hours.restaurant = restaurant
+            custom_hours.save()
+            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+    else:
+        form = CustomHoursForm()
+
+    context = {
+        'restaurant': restaurant,
+        'form': form,
+    }
+
+    return render(request, 'app/add_custom_hours.html', context)
+ 
 
 def show_restaurant(request, restaurant_slug):
     # Create a context dictionary which we can pass

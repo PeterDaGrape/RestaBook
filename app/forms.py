@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from app.models import User, Restaurant, StandardHours
+from app.models import User, Restaurant, StandardHours, CustomHours
 from django import forms
 
 
@@ -27,4 +27,14 @@ class StandardHoursForm(forms.ModelForm):
         widgets = {
             'opening_time': forms.TimeInput(attrs={'type': 'time'}),
             'closing_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+class CustomHoursForm(forms.ModelForm):
+    class Meta:
+        model = CustomHours
+        fields = ('number_tables', 'opening_time', 'closing_time', 'date')
+        widgets = {
+            'opening_time': forms.TimeInput(attrs={'type': 'time'}),
+            'closing_time': forms.TimeInput(attrs={'type': 'time'}),
+            'date': forms.DateInput(attrs={'type': 'date'}),
         }
