@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-
-from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm
-
+from app.forms import UserProfileForm, UserForm, BookingForm
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -175,23 +173,6 @@ def show_restaurant(request, restaurant_slug):
         # If we can't, the .get() method raises a DoesNotExist exception.
         # The .get() method returns one model instance or raises an exception.
         restaurant = Restaurant.objects.get(slug=restaurant_slug)
-
-
-
-
-        if (Restaurant.objects.get(slug=restaurant_slug).manager == request.user):
-            print("User is the site admin")
-            context_dict['site_manager'] = True
-        else:
-            context_dict['site_manager'] = False
- 
-
-        # Retrieve all of the associated pages.
-        # The filter() will return a list of page objects or an empty list.
-        # Adds our results list to the template context under name pages.
-        # We also add the category object from
-        # the database to the context dictionary.
-        # We'll use this in the template to verify that the category exists.
         context_dict = {
             'restaurant': restaurant,  # Pass the full restaurant object
             'name': restaurant.name,
@@ -200,10 +181,7 @@ def show_restaurant(request, restaurant_slug):
             'phone': restaurant.phone,
         }
     except Restaurant.DoesNotExist:
-        pass
-        # We get here if we didn't find the specified category.
-        # Don't do anything -
-        # the template will display the "no category" message for us.
+        pass  # Do nothing, template will handle missing restaurant
 
     # Go render the response and return it to the client.
     return render(request, 'app/restaurant.html', context=context_dict)

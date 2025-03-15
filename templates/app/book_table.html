@@ -1,0 +1,56 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title_block %}
+    Book a Table
+{% endblock %}
+
+{% block body_block %}
+    <div class="form-container booking-form">
+        <h2 class="form-title">Book a Table at {{ restaurant.name }}</h2>
+        
+        {% if form.errors %}
+            <div class="form-error-container">
+                <p>Please correct the errors below:</p>
+            </div>
+        {% endif %}
+        
+        <form method="post" id="booking-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Your Name:</label>
+                {{ form.name }}
+                <p class="error-message">{{ form.name.errors }}</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Your Email:</label>
+                {{ form.email }}
+                <p class="error-message">{{ form.email.errors }}</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Date (YYYY-MM-DD):</label>
+                {{ form.date }}
+                <p class="error-message">{{ form.date.errors }}</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="time">Time (HH:MM, 24-hour format):</label>
+                {{ form.time }}
+                <p class="error-message">{{ form.time.errors }}</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="guests">Number of Guests:</label>
+                {{ form.guests }}
+                <p class="error-message">{{ form.guests.errors }}</p>
+            </div>
+            
+            <button type="submit" class="btn-submit">Submit Booking</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/booking_validation.js' %}"></script>
+{% endblock %}
+
