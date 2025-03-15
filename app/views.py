@@ -1,13 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm
+
+from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm
+
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 
 def register(request):
@@ -223,18 +226,10 @@ def add_custom_hours(request, restaurant_slug):
  
 
 def show_restaurant(request, restaurant_slug):
-    # Create a context dictionary which we can pass
-    # to the template rendering engine.
     context_dict = {}
     try:
-        # Can we find a category name slug with the given name?
-        # If we can't, the .get() method raises a DoesNotExist exception.
-        # The .get() method returns one model instance or raises an exception.
         restaurant = Restaurant.objects.get(slug=restaurant_slug)
-        context_dict['name'] = restaurant.name
-        context_dict['cuisine'] = restaurant.cuisine
-        context_dict['email'] = restaurant.email
-        context_dict['phone'] = restaurant.phone
+
 
 
 
@@ -251,11 +246,43 @@ def show_restaurant(request, restaurant_slug):
         # We also add the category object from
         # the database to the context dictionary.
         # We'll use this in the template to verify that the category exists.
+        context_dict = {
+            'restaurant': restaurant,  # Pass the full restaurant object
+            'name': restaurant.name,
+            'cuisine': restaurant.cuisine,
+            'email': restaurant.email,
+            'phone': restaurant.phone,
+        }
     except Restaurant.DoesNotExist:
-        pass
-        # We get here if we didn't find the specified category.
-        # Don't do anything -
-        # the template will display the "no category" message for us.
+        pass  # Do nothing, template will handle missing restaurant
 
-    # Go render the response and return it to the client.
     return render(request, 'app/restaurant.html', context=context_dict)
+
+def book_table(request, restaurant_slug):
+    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
+
+    if request.method == "POST":
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.restaurant = restaurant  # Assign the restaurant using the slug
+            
+            if not check_availability(restaurant, booking.date, booking.time, booking.people_count):
+                messages.error(request, "No available tables at the selected time.")
+                return redirect('book_table', restaurant_slug=restaurant.slug)
+
+            booking.save()
+            messages.success(request, "Booking confirmed!")
+            return redirect('restaurant_detail', restaurant_slug=restaurant.slug)
+    else:
+        form = BookingForm(initial={'restaurant': restaurant})
+
+    return render(request, 'app/book_table.html', {'form': form, 'restaurant': restaurant})
+
+def check_availability(restaurant, date, time, people_count):
+    existing_bookings = Booking.objects.filter(restaurant=restaurant, date=date, time=time)
+    total_people_booked = sum(b.people_count for b in existing_bookings)
+
+    return (total_people_booked + people_count) <= restaurant.max_capacity
+        

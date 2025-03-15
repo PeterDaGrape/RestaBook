@@ -2,8 +2,10 @@ from django.db import models
 
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 class User(AbstractUser):
+    
     isManager = models.BooleanField(default=False)
 
 
@@ -26,6 +28,8 @@ class Restaurant(models.Model):
     email = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
+    
+    max_capacity = models.IntegerField(default = 50)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -38,11 +42,19 @@ class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
+
     date = models.DateField()
     time = models.TimeField()
+    
+    people_count = models.IntegerField(default=1)
+    
+    def save(self, *args, **kwargs):
+        if self.people_count > 4:
+            raise ValueError("A booking cannot exceed 4 people.")
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.user.username + " " + str(self.date) + " " + str(self.time)
+        return f"{self.user.username} booked at {self.restaurant.name} on {self.date} at {self.time}"
     
 
 

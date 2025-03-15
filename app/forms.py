@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from app.models import User, Restaurant, StandardHours, CustomHours
+from app.models import User, Restaurant, StandardHours, CustomHours, Booking
+
 from django import forms
 
 
@@ -38,3 +39,15 @@ class CustomHoursForm(forms.ModelForm):
             'closing_time': forms.TimeInput(attrs={'type': 'time'}),
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+       
+        
+class BookingForm(forms.ModelForm):
+    class Meta: 
+        model = Booking 
+        fields = [ 'date', 'time', 'people_count']
+        
+    def clean_people_count(self):
+        people_count = self.cleaned_data.get('people_count')
+        if people_count > 4:
+            raise forms.ValidationError("You can't book a reservation for more than 4 people.")
+        return people_count
