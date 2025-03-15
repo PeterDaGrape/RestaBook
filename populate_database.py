@@ -44,7 +44,6 @@ def populate():
         number_tables = 10,
         opening_time = datetime.time(hour=9,minute=30),
         closing_time = datetime.time(hour=22,minute=30),
-        is_open = True,
         week_day = 3
     )
     

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm, RestaurantForm
+from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -146,9 +146,9 @@ def manage_restaurant(request, restaurant_slug):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
     if request.method == 'POST':
-        form = RestaurantForm(request.POST, instance=restaurant)
-        if form.is_valid():
-            form.save()
+        restaurant_form = RestaurantForm(request.POST, instance=restaurant)
+        if restaurant_form.is_valid():
+            restaurant_form.save()
             return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
     else:
         restaurant_form = RestaurantForm(instance=restaurant)
@@ -166,6 +166,38 @@ def manage_restaurant(request, restaurant_slug):
     }
 
     return render(request, 'app/manage_restaurant.html', context)
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
+from app.forms import StandardHoursForm
+from app.models import Restaurant, StandardHours
+
+@login_required
+def add_standard_hours(request, restaurant_slug):
+    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
+
+    if not (request.user.isManager or request.user.is_superuser):
+        return HttpResponseForbidden("You are not authorized to access this page.")
+
+    if request.method == 'POST':
+        form = StandardHoursForm(request.POST)
+        if form.is_valid():
+            standard_hours = form.save(commit=False)
+            standard_hours.restaurant = restaurant
+            standard_hours.save()
+            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+    else:
+        form = StandardHoursForm()
+
+    context = {
+        'restaurant': restaurant,
+        'form': form,
+    }
+
+    return render(request, 'app/add_standard_hours.html', context)
+
+    
 
 def show_restaurant(request, restaurant_slug):
     # Create a context dictionary which we can pass

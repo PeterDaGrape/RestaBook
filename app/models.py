@@ -64,11 +64,10 @@ class StandardHours(models.Model):
     number_tables = models.IntegerField()
     opening_time = models.TimeField()
     closing_time = models.TimeField()
-    is_open = models.BooleanField()
     week_day = models.IntegerField()
 
     def __str__(self):
-        return self.restaurant + " " + str(self.week_day) + " " + str(self.is_open) 
+        return self.restaurant.name + " " + str(self.week_day) + " " + str(self.is_open) 
 
 
 
@@ -76,7 +75,6 @@ class CustomHours(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
     number_tables = models.IntegerField()
-    is_open = models.BooleanField()
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     date = models.DateField()

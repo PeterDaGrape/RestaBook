@@ -20,9 +20,11 @@ class RestaurantForm(forms.ModelForm):
         model = Restaurant
         fields = ('name', 'email', 'address', 'phone', 'cuisine')
 
-
-
 class StandardHoursForm(forms.ModelForm):
     class Meta:
         model = StandardHours
-        fields = ('number_tables', 'opening_time', 'closing_time', 'is_open', 'week_day')
+        fields = ('number_tables', 'opening_time', 'closing_time', 'week_day')
+        widgets = {
+            'opening_time': forms.TimeInput(attrs={'type': 'time'}),
+            'closing_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
