@@ -7,13 +7,6 @@
 {% block body_block %}
     <h1>Manager Admin Page for {{ restaurant }}</h1>
     
-    <h2>Edit Restaurant Details</h2>
-    <form method="post" action="{% url 'app:manage_restaurant' restaurant.slug %}">
-        {% csrf_token %}
-        {{ restaurant_form.as_p }}
-        <input type="submit" value="Save Changes">
-    </form>
-    
     <h2>Bookings</h2>
     <ul>
         {% for booking in bookings %}
@@ -22,7 +15,6 @@
     </ul>
     
     <h2>Custom Hours</h2>
-        <a href="{{ request.path }}/add_custom_hours">Add</a>
     <ul>
         {% for custom_hour in custom_hours %}
             <li>{{ custom_hour }}</li>
@@ -30,7 +22,6 @@
     </ul>
     
     <h2>Standard Hours</h2>
-        <a href="{{ request.path }}/add_standard_hours">Add</a>
     <ul>
         {% for standard_hour in standard_hours %}
             <li>{{ standard_hour }}</li>
