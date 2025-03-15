@@ -88,4 +88,4 @@ class CustomHours(models.Model):
 
     def __str__(self):
 
-        return self.restaurant + " " + str(self.date) + " " + str(self.is_open) 
+        return str(self.opening_time) + " - " + str(self.closing_time) + " " + str(self.date)
