@@ -15,8 +15,11 @@
 
     <div>
         {% if site_manager %}
-            <li><a href="{{ request.path }}manage">Manager edit</a></li>
+            <a href="{{ request.path }}manage">Manager edit</a>
         {% endif %}
     </div>
+
+
+    <a href="{{ request.path }}book_table">Book table</a>
 
 {% endblock %}

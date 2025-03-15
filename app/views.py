@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm
+from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -167,11 +167,6 @@ def manage_restaurant(request, restaurant_slug):
 
     return render(request, 'app/manage_restaurant.html', context)
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseForbidden
-from django.contrib.auth.decorators import login_required
-from app.forms import StandardHoursForm
-from app.models import Restaurant, StandardHours
 
 @login_required
 def add_standard_hours(request, restaurant_slug):
@@ -220,6 +215,30 @@ def add_custom_hours(request, restaurant_slug):
     }
 
     return render(request, 'app/add_custom_hours.html', context)
+
+@login_required
+def book_table(request, restaurant_slug):
+    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
+
+
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.restaurant = restaurant
+            booking.save()
+            return redirect('app:show_restaurant', restaurant_slug=restaurant_slug)
+    else:
+        form = BookingForm()
+
+    context = {
+        'restaurant': restaurant,
+        'form': form,
+    }
+
+    return render(request, 'app/book_table.html', context)
+ 
  
 
 def show_restaurant(request, restaurant_slug):
