@@ -149,7 +149,8 @@ def manage_restaurant(request, restaurant_slug):
         restaurant_form = RestaurantForm(request.POST, instance=restaurant)
         if restaurant_form.is_valid():
             restaurant_form.save()
-            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+            print(restaurant.slug)
+            return redirect('app:manage_restaurant', restaurant_slug=restaurant.slug)
     else:
         restaurant_form = RestaurantForm(instance=restaurant)
 

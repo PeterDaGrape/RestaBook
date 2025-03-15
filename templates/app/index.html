@@ -8,6 +8,7 @@
 
     <h1>RestaBook</h1>
 
+    Top restaurants: 
     <ul>
         {% if restaurants %}
             {% for restaurant in restaurants %}
@@ -22,4 +23,7 @@
             <li><strong>There are no restaurants present.</strong></li>
         {% endif %}
     </ul>
+
+    <a href="{% url 'app:restaurants' %}">All restaurants</a>
+
 {% endblock %}
