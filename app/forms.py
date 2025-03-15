@@ -16,10 +16,13 @@ class UserProfileForm(forms.ModelForm):
         
         
 class BookingForm(forms.ModelForm):
+    name = forms.CharField(label="Your Name", max_length=100, required=True)
+    email = forms.EmailField(label="Your Email", required=True)
+
     class Meta: 
         model = Booking 
-        fields = [ 'date', 'time', 'people_count']
-        
+        fields = ['name', 'email', 'date', 'time', 'people_count']
+
     def clean_people_count(self):
         people_count = self.cleaned_data.get('people_count')
         if people_count > 4:

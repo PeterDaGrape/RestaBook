@@ -177,7 +177,7 @@ def show_restaurant(request, restaurant_slug):
             'phone': restaurant.phone,
         }
     except Restaurant.DoesNotExist:
-        pass  # Do nothing, template will handle missing restaurant
+        pass  # Nothing, template will handle missing restaurant
 
     return render(request, 'app/restaurant.html', context=context_dict)
 
