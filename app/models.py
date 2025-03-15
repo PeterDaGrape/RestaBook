@@ -76,7 +76,6 @@ class CustomHours(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
     number_tables = models.IntegerField()
-    is_open = models.BooleanField()
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     date = models.DateField()
