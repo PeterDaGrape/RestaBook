@@ -60,15 +60,21 @@ class Review(models.Model):
 
 class StandardHours(models.Model):  
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
     number_tables = models.IntegerField()
     opening_time = models.TimeField()
     closing_time = models.TimeField()
-    is_open = models.BooleanField()
-    week_day = models.IntegerField()
-
+    week_day = models.CharField(max_length=9, choices=DAYS_OF_WEEK)
     def __str__(self):
-        return self.restaurant + " " + str(self.week_day) + " " + str(self.is_open) 
+        return str(self.opening_time) + " - " + str(self.closing_time) + " " + str(self.week_day)
 
 
 
@@ -76,7 +82,6 @@ class CustomHours(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
     number_tables = models.IntegerField()
-    is_open = models.BooleanField()
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     date = models.DateField()
