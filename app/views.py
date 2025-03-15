@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm
+
+from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm
+
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -140,87 +142,29 @@ def show_restaurants(request):
 
 @login_required
 def manage_restaurant(request, restaurant_slug):
+
+    print(request.user.is_superuser)
+    if not (request.user.isManager or request.user.is_superuser):
+
+        return HttpResponseForbidden("You are not authorized to access this page.")
+    
+    
     restaurant = Restaurant.objects.get(slug=restaurant_slug)
 
-    if not (request.user.isManager or request.user.is_superuser):
-        return HttpResponseForbidden("You are not authorized to access this page.")
-
-    if request.method == 'POST':
-        restaurant_form = RestaurantForm(request.POST, instance=restaurant)
-        if restaurant_form.is_valid():
-            restaurant_form.save()
-            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
-    else:
-        restaurant_form = RestaurantForm(instance=restaurant)
 
     bookings = Booking.objects.filter(restaurant=restaurant)
     custom_hours = CustomHours.objects.filter(restaurant=restaurant)
     standard_hours = StandardHours.objects.filter(restaurant=restaurant)
-
+    
+    
     context = {
-        'restaurant': restaurant,
+        'restaurant' : restaurant,
         'bookings': bookings,
         'custom_hours': custom_hours,
         'standard_hours': standard_hours,
-        'restaurant_form': restaurant_form,
     }
-
+    
     return render(request, 'app/manage_restaurant.html', context)
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseForbidden
-from django.contrib.auth.decorators import login_required
-from app.forms import StandardHoursForm
-from app.models import Restaurant, StandardHours
-
-@login_required
-def add_standard_hours(request, restaurant_slug):
-    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
-
-    if not (request.user.isManager or request.user.is_superuser):
-        return HttpResponseForbidden("You are not authorized to access this page.")
-
-    if request.method == 'POST':
-        form = StandardHoursForm(request.POST)
-        if form.is_valid():
-            standard_hours = form.save(commit=False)
-            standard_hours.restaurant = restaurant
-            standard_hours.save()
-            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
-    else:
-        form = StandardHoursForm()
-
-    context = {
-        'restaurant': restaurant,
-        'form': form,
-    }
-
-    return render(request, 'app/add_standard_hours.html', context)
-
-@login_required
-def add_custom_hours(request, restaurant_slug):
-    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
-
-    if not (request.user.isManager or request.user.is_superuser):
-        return HttpResponseForbidden("You are not authorized to access this page.")
-
-    if request.method == 'POST':
-        form = CustomHoursForm(request.POST)
-        if form.is_valid():
-            custom_hours = form.save(commit=False)
-            custom_hours.restaurant = restaurant
-            custom_hours.save()
-            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
-    else:
-        form = CustomHoursForm()
-
-    context = {
-        'restaurant': restaurant,
-        'form': form,
-    }
-
-    return render(request, 'app/add_custom_hours.html', context)
- 
 
 def show_restaurant(request, restaurant_slug):
     # Create a context dictionary which we can pass
@@ -231,10 +175,7 @@ def show_restaurant(request, restaurant_slug):
         # If we can't, the .get() method raises a DoesNotExist exception.
         # The .get() method returns one model instance or raises an exception.
         restaurant = Restaurant.objects.get(slug=restaurant_slug)
-        context_dict['name'] = restaurant.name
-        context_dict['cuisine'] = restaurant.cuisine
-        context_dict['email'] = restaurant.email
-        context_dict['phone'] = restaurant.phone
+
 
 
 
@@ -251,6 +192,13 @@ def show_restaurant(request, restaurant_slug):
         # We also add the category object from
         # the database to the context dictionary.
         # We'll use this in the template to verify that the category exists.
+        context_dict = {
+            'restaurant': restaurant,  # Pass the full restaurant object
+            'name': restaurant.name,
+            'cuisine': restaurant.cuisine,
+            'email': restaurant.email,
+            'phone': restaurant.phone,
+        }
     except Restaurant.DoesNotExist:
         pass
         # We get here if we didn't find the specified category.
