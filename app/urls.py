@@ -1,7 +1,5 @@
 from django.urls import path
 from app import views
-from .views import book_table
-
 app_name = 'app'
 
 urlpatterns = [
@@ -13,5 +11,4 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name= 'login'),
     path('logout/', views.user_logout, name='logout'),
-    path('restaurants/<slug:restaurant_slug>/book/', views.book_table, name='book_table'),
 ]

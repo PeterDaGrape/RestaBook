@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from app.forms import UserProfileForm, UserForm, BookingForm
@@ -8,7 +8,6 @@ from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
 
 
 def register(request):
@@ -166,8 +165,13 @@ def manage_restaurant(request, restaurant_slug):
     return render(request, 'app/manage_restaurant.html', context)
 
 def show_restaurant(request, restaurant_slug):
+    # Create a context dictionary which we can pass
+    # to the template rendering engine.
     context_dict = {}
     try:
+        # Can we find a category name slug with the given name?
+        # If we can't, the .get() method raises a DoesNotExist exception.
+        # The .get() method returns one model instance or raises an exception.
         restaurant = Restaurant.objects.get(slug=restaurant_slug)
         context_dict = {
             'restaurant': restaurant,  # Pass the full restaurant object
@@ -177,35 +181,7 @@ def show_restaurant(request, restaurant_slug):
             'phone': restaurant.phone,
         }
     except Restaurant.DoesNotExist:
-        pass  # Nothing, template will handle missing restaurant
+        pass  # Do nothing, template will handle missing restaurant
 
+    # Go render the response and return it to the client.
     return render(request, 'app/restaurant.html', context=context_dict)
-
-def book_table(request, restaurant_slug):
-    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
-
-    if request.method == "POST":
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user
-            booking.restaurant = restaurant  # Assign the restaurant using the slug
-            
-            if not check_availability(restaurant, booking.date, booking.time, booking.people_count):
-                messages.error(request, "No available tables at the selected time.")
-                return redirect('book_table', restaurant_slug=restaurant.slug)
-
-            booking.save()
-            messages.success(request, "Booking confirmed!")
-            return redirect('restaurant_detail', restaurant_slug=restaurant.slug)
-    else:
-        form = BookingForm(initial={'restaurant': restaurant})
-
-    return render(request, 'app/book_table.html', {'form': form, 'restaurant': restaurant})
-
-def check_availability(restaurant, date, time, people_count):
-    existing_bookings = Booking.objects.filter(restaurant=restaurant, date=date, time=time)
-    total_people_booked = sum(b.people_count for b in existing_bookings)
-
-    return (total_people_booked + people_count) <= restaurant.max_capacity
-        
