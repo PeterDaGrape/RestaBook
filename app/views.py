@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm
+from app.forms import UserProfileForm, UserForm, RestaurantForm
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -140,28 +140,31 @@ def show_restaurants(request):
 
 @login_required
 def manage_restaurant(request, restaurant_slug):
-
-    print(request.user.is_superuser)
-    if not (request.user.isManager or request.user.is_superuser):
-
-        return HttpResponseForbidden("You are not authorized to access this page.")
-    
-    
     restaurant = Restaurant.objects.get(slug=restaurant_slug)
 
+    if not (request.user.isManager or request.user.is_superuser):
+        return HttpResponseForbidden("You are not authorized to access this page.")
+
+    if request.method == 'POST':
+        form = RestaurantForm(request.POST, instance=restaurant)
+        if form.is_valid():
+            form.save()
+            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+    else:
+        restaurant_form = RestaurantForm(instance=restaurant)
 
     bookings = Booking.objects.filter(restaurant=restaurant)
     custom_hours = CustomHours.objects.filter(restaurant=restaurant)
     standard_hours = StandardHours.objects.filter(restaurant=restaurant)
-    
-    
+
     context = {
-        'restaurant' : restaurant,
+        'restaurant': restaurant,
         'bookings': bookings,
         'custom_hours': custom_hours,
         'standard_hours': standard_hours,
+        'restaurant_form': restaurant_form,
     }
-    
+
     return render(request, 'app/manage_restaurant.html', context)
 
 def show_restaurant(request, restaurant_slug):
@@ -177,6 +180,15 @@ def show_restaurant(request, restaurant_slug):
         context_dict['cuisine'] = restaurant.cuisine
         context_dict['email'] = restaurant.email
         context_dict['phone'] = restaurant.phone
+
+
+
+        if (Restaurant.objects.get(slug=restaurant_slug).manager == request.user):
+            print("User is the site admin")
+            context_dict['site_manager'] = True
+        else:
+            context_dict['site_manager'] = False
+ 
 
         # Retrieve all of the associated pages.
         # The filter() will return a list of page objects or an empty list.

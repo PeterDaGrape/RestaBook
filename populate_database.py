@@ -1,6 +1,6 @@
 import os
 import django
-
+import datetime
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'RestaBook.settings')
 django.setup()
 
@@ -36,6 +36,16 @@ def populate():
         email='contact@chinesedelight.com',
         address='456 Elm St',
         phone='987-654-3210'
+    )
+
+
+    r1_st_hours = StandardHours.objects.create(
+        restaurant = restaurant1,
+        number_tables = 10,
+        opening_time = datetime.time(hour=9,minute=30),
+        closing_time = datetime.time(hour=22,minute=30),
+        is_open = True,
+        week_day = 3
     )
     
     print("Database populated with test data.")

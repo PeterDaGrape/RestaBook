@@ -13,4 +13,10 @@
         Address: {{ address }}
     {% endif %}
 
+    <div>
+        {% if site_manager %}
+            <li><a href="{{ request.path }}manage">Manager edit</a></li>
+        {% endif %}
+    </div>
+
 {% endblock %}

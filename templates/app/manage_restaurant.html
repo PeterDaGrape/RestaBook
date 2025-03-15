@@ -7,6 +7,13 @@
 {% block body_block %}
     <h1>Manager Admin Page for {{ restaurant }}</h1>
     
+    <h2>Edit Restaurant Details</h2>
+    <form method="post" action="{% url 'app:manage_restaurant' restaurant.slug %}">
+        {% csrf_token %}
+        {{ restaurant_form.as_p }}
+        <input type="submit" value="Save Changes">
+    </form>
+    
     <h2>Bookings</h2>
     <ul>
         {% for booking in bookings %}
