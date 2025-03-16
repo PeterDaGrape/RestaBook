@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from app.models import User, Restaurant, StandardHours, CustomHours, Booking
+from app.models import User, Restaurant, StandardHours, CustomHours, Booking, Review
 
 from django import forms
 
@@ -57,4 +57,38 @@ class BookingForm(forms.ModelForm):
         widgets = {
             'time': forms.TimeInput(attrs={'type': 'time'}),
             'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+# filepath: /Users/petervine/Developer/RestaBook/app/widgets.py
+from django import forms
+from django.utils.safestring import mark_safe
+
+class StarRatingWidget(forms.Widget):
+    def render(self, name, value, attrs=None, renderer=None):
+        html = """
+        <div class="star-rating">
+            <input type="radio" name="{name}" value="1" {checked_1}> 1
+            <input type="radio" name="{name}" value="2" {checked_2}> 2
+            <input type="radio" name="{name}" value="3" {checked_3}> 3
+            <input type="radio" name="{name}" value="4" {checked_4}> 4
+            <input type="radio" name="{name}" value="5" {checked_5}> 5
+        </div>
+        """.format(
+            name=name,
+            checked_1='checked' if value == '1' else '',
+            checked_2='checked' if value == '2' else '',
+            checked_3='checked' if value == '3' else '',
+            checked_4='checked' if value == '4' else '',
+            checked_5='checked' if value == '5' else '',
+        )
+        return mark_safe(html)
+    
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ('star_rating', 'text')
+        widgets = {
+            'star_rating': StarRatingWidget(),
+            'text': forms.Textarea(attrs={'rows': 4, 'cols': 40}),
         }

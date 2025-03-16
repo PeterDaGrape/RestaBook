@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm
-from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours
+from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm, ReviewForm
+from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours, Review
 from django.shortcuts import redirect
 from django.urls import reverse
-
+import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
@@ -105,9 +105,10 @@ def user_login(request):
 
 def index(request):
     restaurant_list = Restaurant.objects.all()[:5]
-    print(restaurant_list)
+
+    sorted_restaurants = sorted(restaurant_list, key=lambda restaurant: restaurant.calculate_average_stars(), reverse=True)
     context_dict = {}
-    context_dict['restaurants'] = restaurant_list
+    context_dict['restaurants'] = sorted_restaurants
     response = render(request, 'app/index.html', context=context_dict)
     return response
 
@@ -243,39 +244,36 @@ def book_table(request, restaurant_slug):
  
 
 def show_restaurant(request, restaurant_slug):
-    # Create a context dictionary which we can pass
-    # to the template rendering engine.
     context_dict = {}
     try:
-        # Can we find a category name slug with the given name?
-        # If we can't, the .get() method raises a DoesNotExist exception.
-        # The .get() method returns one model instance or raises an exception.
         restaurant = Restaurant.objects.get(slug=restaurant_slug)
+        context_dict['restaurant'] = restaurant
         context_dict['name'] = restaurant.name
         context_dict['cuisine'] = restaurant.cuisine
         context_dict['email'] = restaurant.email
         context_dict['phone'] = restaurant.phone
 
+        if request.method == 'POST' and request.user.is_authenticated:
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.user = request.user
+                review.restaurant = restaurant
+                review.review_date = datetime.date.today()
+                review.save()
+                return redirect('app:show_restaurant', restaurant_slug=restaurant_slug)
+        else:
+            form = ReviewForm()
 
 
-        if (Restaurant.objects.get(slug=restaurant_slug).manager == request.user):
-            print("User is the site admin")
+        context_dict['form'] = form
+        context_dict['reviews'] = Review.objects.filter(restaurant=restaurant)
+        if restaurant.manager == request.user:
             context_dict['site_manager'] = True
         else:
             context_dict['site_manager'] = False
- 
 
-        # Retrieve all of the associated pages.
-        # The filter() will return a list of page objects or an empty list.
-        # Adds our results list to the template context under name pages.
-        # We also add the category object from
-        # the database to the context dictionary.
-        # We'll use this in the template to verify that the category exists.
     except Restaurant.DoesNotExist:
         pass
-        # We get here if we didn't find the specified category.
-        # Don't do anything -
-        # the template will display the "no category" message for us.
 
-    # Go render the response and return it to the client.
     return render(request, 'app/restaurant.html', context=context_dict)
