@@ -142,7 +142,7 @@ def show_restaurants(request):
 def manage_restaurant(request, restaurant_slug):
     restaurant = Restaurant.objects.get(slug=restaurant_slug)
 
-    if not (request.user.isManager or request.user.is_superuser):
+    if not (Restaurant.objects.get(slug=restaurant_slug).manager == request.user or request.user.is_superuser):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
     if request.method == 'POST':
@@ -173,7 +173,7 @@ def manage_restaurant(request, restaurant_slug):
 def add_standard_hours(request, restaurant_slug):
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
 
-    if not (request.user.isManager or request.user.is_superuser):
+    if not (Restaurant.objects.get(slug=restaurant_slug).manager == request.user or request.user.is_superuser):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
     if request.method == 'POST':
@@ -197,7 +197,7 @@ def add_standard_hours(request, restaurant_slug):
 def add_custom_hours(request, restaurant_slug):
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
 
-    if not (request.user.isManager or request.user.is_superuser):
+    if not (Restaurant.objects.get(slug=restaurant_slug).manager == request.user or request.user.is_superuser):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
     if request.method == 'POST':
