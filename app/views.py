@@ -105,9 +105,10 @@ def user_login(request):
 
 def index(request):
     restaurant_list = Restaurant.objects.all()[:5]
-    print(restaurant_list)
+
+    sorted_restaurants = sorted(restaurant_list, key=lambda restaurant: restaurant.calculate_average_stars(), reverse=True)
     context_dict = {}
-    context_dict['restaurants'] = restaurant_list
+    context_dict['restaurants'] = sorted_restaurants
     response = render(request, 'app/index.html', context=context_dict)
     return response
 

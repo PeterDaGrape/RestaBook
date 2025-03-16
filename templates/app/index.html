@@ -14,7 +14,7 @@
             {% for restaurant in restaurants %}
                 <li>
                     <strong>
-                        <a href="{% url 'app:show_restaurant' restaurant.slug %}">{{ restaurant.name }}</a>
+                        <a href="{% url 'app:show_restaurant' restaurant.slug %}">{{ restaurant.name }}</a> - Average Rating: {{ restaurant.calculate_average_stars }}                    
                     </strong>
                 </li>
     

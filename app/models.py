@@ -33,6 +33,23 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def calculate_average_stars(self):
+        
+        reviews = Review.objects.filter(restaurant = self)
+        if not reviews:
+            return 0 
+        
+
+        total = 0
+        i = 0
+        for i in range(len(reviews)):
+            review_stars = reviews[i].star_rating
+            if review_stars >= 0 and review_stars <= 5:
+                total += review_stars
+        average = total / (i+1)
+        return average
+        
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -57,6 +74,9 @@ class Review(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+
 
 class StandardHours(models.Model):  
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
