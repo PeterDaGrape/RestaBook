@@ -22,4 +22,36 @@
 
     <a href="{{ request.path }}book_table">Book table</a>
 
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <li>
+                <strong>{{ review.user.username }}</strong> - {{ review.star_rating }} stars
+                <p>{{ review.text }}</p>
+                <small>Reviewed on {{ review.review_date }}</small>
+            </li>
+        {% endfor %}
+        {% else %}
+        <li><strong>There are no reviews yet.</strong></li>
+    {% endif %}
+
+
+    {% if user.is_authenticated %}
+    <div class="form-container">
+        <h1 class="form-title"> Leave a review</h1>
+        <form method="post" action="{% url 'app:show_restaurant' restaurant.slug %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Save Changes">
+        </form>
+    </div>
+    {% else %}
+        Sign in to leave a review.
+    {% endif %}
+
+
+
+
+
+
 {% endblock %}
