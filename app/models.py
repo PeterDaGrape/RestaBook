@@ -39,7 +39,7 @@ class Restaurant(models.Model):
         reviews = Review.objects.filter(restaurant = self)
         if not reviews:
             return 0 
-        
+         
 
         total = 0
         i = 0
