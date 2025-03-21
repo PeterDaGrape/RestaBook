@@ -281,13 +281,17 @@ def show_restaurant(request, restaurant_slug):
 @login_required
 def user_profile(request):
     user = request.user
+    
+    # Fetch bookings for the logged-in user
+    user_bookings = Booking.objects.filter(user=user).order_by('-date', '-time')
 
-    if request.method == 'POST':
-        user_form = UserForm(request.POST, instance=user)
-        if user_form.is_valid():
-            user_form.save()
-            return redirect('app:profile')  # Refresh page after update
-    else:
-        user_form = UserForm(instance=user)
+    # Fetch reviews made by the logged-in user
+    user_reviews = Review.objects.filter(user=user).order_by('-review_date')
 
-    return render(request, 'app/profile.html', {'user_form': user_form})
+    context = {
+        'user': user,
+        'bookings': user_bookings,
+        'reviews': user_reviews
+    }
+    
+    return render(request, 'app/profile.html', context)

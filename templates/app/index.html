@@ -11,10 +11,12 @@
     <p>Welcome to RestaBook!</p>
 
     {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}! <a href="{% url 'app:profile' %}">View Profile</a> | <a href="{% url 'app:logout' %}">Logout</a></p>
-    {% else %}
-        <p><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Sign Up</a></p>
-    {% endif %}
+    <a href="{% url 'app:profile' %}">Your Profile</a> |
+    <a href="{% url 'app:logout' %}">Logout</a>
+{% else %}
+    <a href="{% url 'app:login' %}">Login</a> |
+    <a href="{% url 'app:register' %}">Register</a>
+{% endif %}
 
     Top restaurants: 
     <ul>

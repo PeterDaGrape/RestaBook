@@ -1,35 +1,53 @@
 {% extends 'app/base.html' %}
 
 {% block title_block %}
-    User Profile
+    Your Profile
 {% endblock %}
 
 {% block body_block %}
-    <div class="form-container">
-        <h2 class="form-title">Your Profile</h2>
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="username">Username:</label>
-                {{ user_form.username }}
-                <p class="error-message">{{ user_form.username.errors }}</p>
-            </div>
+    <h1>Welcome, {{ user.username }}!</h1>
+    <p>Email: {{ user.email }}</p>
 
-            <div class="form-group">
-                <label for="email">Email:</label>
-                {{ user_form.email }}
-                <p class="error-message">{{ user_form.email.errors }}</p>
-            </div>
+    <hr>
 
-            <div class="form-group">
-                <label for="password">New Password:</label>
-                {{ user_form.password }}
-                <p class="error-message">{{ user_form.password.errors }}</p>
-            </div>
+    <h2>Your Bookings</h2>
+    {% if bookings %}
+        <ul>
+            {% for booking in bookings %}
+                <li>
+                    <strong>Restaurant:</strong> {{ booking.restaurant.name }}<br>
+                    <strong>Date:</strong> {{ booking.date }}<br>
+                    <strong>Time:</strong> {{ booking.time }}<br>
+                    <strong>Guests:</strong> {{ booking.people_count }}
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no bookings yet.</p>
+    {% endif %}
 
-            <button type="submit" class="btn-submit">Update Profile</button>
-        </form>
-    </div>
+    <hr>
+
+    <h2>Your Reviews</h2>
+    {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <strong>Restaurant:</strong> {{ review.restaurant.name }}<br>
+                    <strong>Rating:</strong> {{ review.rating }} ⭐<br>
+                    <strong>Comment:</strong> {{ review.comment }}<br>
+                    <strong>Posted on:</strong> {{ review.review_date }}
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have not reviewed any restaurants yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <a href="{% url 'app:logout' %}">Logout</a>
 {% endblock %}
+
