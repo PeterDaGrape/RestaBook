@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm, ReviewForm
 from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours, Review
-from django.shortcuts import redirect
 from django.urls import reverse
 import datetime
 from django.contrib.auth.decorators import login_required
@@ -138,6 +137,7 @@ def show_restaurants(request):
     context_dict['restaurants'] = restaurant_list
     response = render(request, 'app/restaurants.html', context=context_dict)
     return response
+
 
 @login_required
 def manage_restaurant(request, restaurant_slug):
@@ -277,3 +277,17 @@ def show_restaurant(request, restaurant_slug):
         pass
 
     return render(request, 'app/restaurant.html', context=context_dict)
+
+@login_required
+def user_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=user)
+        if user_form.is_valid():
+            user_form.save()
+            return redirect('app:profile')  # Refresh page after update
+    else:
+        user_form = UserForm(instance=user)
+
+    return render(request, 'app/profile.html', {'user_form': user_form})

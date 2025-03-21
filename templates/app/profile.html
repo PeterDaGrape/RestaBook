@@ -1,0 +1,35 @@
+{% extends 'app/base.html' %}
+
+{% block title_block %}
+    User Profile
+{% endblock %}
+
+{% block body_block %}
+    <div class="form-container">
+        <h2 class="form-title">Your Profile</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                {{ user_form.username }}
+                <p class="error-message">{{ user_form.username.errors }}</p>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                {{ user_form.email }}
+                <p class="error-message">{{ user_form.email.errors }}</p>
+            </div>
+
+            <div class="form-group">
+                <label for="password">New Password:</label>
+                {{ user_form.password }}
+                <p class="error-message">{{ user_form.password.errors }}</p>
+            </div>
+
+            <button type="submit" class="btn-submit">Update Profile</button>
+        </form>
+    </div>
+{% endblock %}
