@@ -13,7 +13,7 @@
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}! <a href="{% url 'app:profile' %}">View Profile</a> | <a href="{% url 'app:logout' %}">Logout</a></p>
     {% else %}
-        <p><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Sign Up</a></p>
+        <p><a href="{% url 'app:login' %}">Login</a> or <a href="{% url 'app:register' %}">Sign Up</a></p>
     {% endif %}
 
     Top restaurants: 
