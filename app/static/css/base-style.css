@@ -1,0 +1,18 @@
+body {
+    background: linear-gradient(to right, #f2ae9d, #cfb6a2);
+    color: white;
+}
+
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    color: #ff5722;
+}
+
