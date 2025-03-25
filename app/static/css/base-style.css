@@ -1,11 +1,35 @@
-body {
-    background: linear-gradient(to right, #f2ae9d, #cfb6a2);
-    color: white;
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
 }
 
-h1, h2, h3 {
-    font-family: 'Poppins', sans-serif;
-    color: #333;
+body {
+    font-family: "Source Serif 4", serif;
+    font-weight: 350;
+    background-color: #eaf2e3;
+    color: var(--theme_black);
+    padding: 0;
+}
+
+header {
+    background-color: var(--theme_green);
+    color: var(--theme_yellow);
+    font-family: "Monomakh", serif;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.5em;
+}
+
+main {
+    padding: 20px;
 }
 
 a {
