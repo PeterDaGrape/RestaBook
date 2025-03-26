@@ -1,0 +1,42 @@
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
+body {
+    font-family: "Source Serif 4", serif;
+    font-weight: 350;
+    background-color: #eaf2e3;
+    color: var(--theme_black);
+    padding: 0;
+}
+
+header {
+    background-color: var(--theme_green);
+    color: var(--theme_yellow);
+    font-family: "Monomakh", serif;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.5em;
+}
+
+main {
+    padding: 20px;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    color: #ff5722;
+}
+

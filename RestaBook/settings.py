@@ -25,7 +25,7 @@ SECRET_KEY = 'iav(awzf0!c)73&9gfgiv-5ja@sqg8up#(=cvj&j+-53#*41tj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['peterdagrape.pythonanywhere.com', '127.0.0.1']
 LOGIN_URL = '/app/login'
 
 # Application definition

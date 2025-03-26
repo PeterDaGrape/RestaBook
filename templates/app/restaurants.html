@@ -6,7 +6,27 @@
 
 {% block body_block %}
 
+
+
     <h1>All restaurants</h1>
+
+    <form method="get">
+        <label for="sort">Sort by:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            {% for key, value in sort_options.items %}
+                <option value="{{ key }}" {% if key == current_sort %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+    
+        <label for="sort">Filter:</label>
+        <select name="filter" id="filter" onchange="this.form.submit()">
+            {% for key, value in filter_options.items %}
+                <option value="{{ key }}" {% if key == current_filter %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+
+    </form>
+
     <ul>
         {% if restaurants %}
             {% for restaurant in restaurants %}
