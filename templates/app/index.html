@@ -6,24 +6,48 @@
 
 {% block body_block %}
 
-    <h1>RestaBook</h1>
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1 class="jumbotron-heading">RestaBook</h1>
+        <div>
+            <h2 class="h2">
+                {% if user.is_authenticated %}
+                    Welcome to RestaBook, {{ user.username }}!
+                {% else %}
+                    Welcome to RestaBook!
+                {% endif %}
+            </h2>
+        </div>
+    </div>
+</div>
 
-    <p>Welcome to RestaBook!</p>
-    <strong>Top restaurants: </strong>
-    <ul>
-        {% if restaurants %}
-            {% for restaurant in restaurants %}
-                <li>
-                    <strong>
-                        <a href="{% url 'app:show_restaurant' restaurant.slug %}">{{ restaurant.name }}</a> - Average Rating: {{ restaurant.calculate_average_stars }}                    
-                    </strong>
-                </li>
-    
-                {% endfor %}
-            {% else %}
-            <li><strong>There are no restaurants present.</strong></li>
-        {% endif %}
-    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body">
+                <h2>Top restaurants: </h2>
+                <p class="card-text">
+                    <ul>
+                        {% if restaurants %}
+                            {% for restaurant in restaurants %}
+                                <li>
+                                    <strong>
+                                        <a href="{% url 'app:show_restaurant' restaurant.slug %}">{{ restaurant.name }}</a> - Average Rating: {{ restaurant.calculate_average_stars }}                    
+                                    </strong>
+                                </li>
+                    
+                                {% endfor %}
+                            {% else %}
+                            <li><strong>There are no restaurants present.</strong></li>
+                        {% endif %}
+                    </ul>
+                </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <a href="{% url 'app:restaurants' %}">All restaurants</a>
 
