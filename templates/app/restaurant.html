@@ -1,3 +1,9 @@
+{% extends 'app/base.html' %}
+
+{% block title_block %}
+    {{ name }}
+{% endblock %}
+
 {% block body_block %}
     <h1>{{ name }}</h1>
     <p>Phone number: {{ phone }}</p>
