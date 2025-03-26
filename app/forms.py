@@ -21,12 +21,12 @@ class UserProfileForm(forms.ModelForm):
 class RestaurantForm(forms.ModelForm):
     class Meta:
         model = Restaurant
-        fields = ('name', 'email', 'address', 'phone', 'cuisine')
+        fields = ('name', 'email', 'address', 'phone', 'cuisine', 'bookings_allowed')
 
 class StandardHoursForm(forms.ModelForm):
     class Meta:
         model = StandardHours
-        fields = ('number_tables', 'opening_time', 'closing_time', 'week_day')
+        fields = ('number_tables', 'opening_time', 'closing_time', 'week_day', 'bookings_allowed')
         widgets = {
             'opening_time': forms.TimeInput(attrs={'type': 'time'}),
             'closing_time': forms.TimeInput(attrs={'type': 'time'}),
@@ -35,7 +35,7 @@ class StandardHoursForm(forms.ModelForm):
 class CustomHoursForm(forms.ModelForm):
     class Meta:
         model = CustomHours
-        fields = ('number_tables', 'opening_time', 'closing_time', 'date')
+        fields = ('number_tables', 'opening_time', 'closing_time', 'date', 'bookings_allowed')
         widgets = {
             'opening_time': forms.TimeInput(attrs={'type': 'time'}),
             'closing_time': forms.TimeInput(attrs={'type': 'time'}),
@@ -49,6 +49,7 @@ class BookingForm(forms.ModelForm):
     class Meta: 
         model = Booking 
         fields = ['name', 'email', 'date', 'time']
+
 
 class BookingForm(forms.ModelForm):
     class Meta:

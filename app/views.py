@@ -202,22 +202,47 @@ def manage_restaurant(request, restaurant_slug):
 
     return render(request, 'app/manage_restaurant.html', context)
 
+# filepath: /Users/petervine/Developer/RestaBook/app/views.py
 @login_required
 def add_standard_hours(request, restaurant_slug):
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
 
-    if not (Restaurant.objects.get(slug=restaurant_slug).manager == request.user or request.user.is_superuser):
+    if not (restaurant.manager == request.user or request.user.is_superuser):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
-    if request.method == 'POST':
-        form = StandardHoursForm(request.POST)
-        if form.is_valid():
-            standard_hours = form.save(commit=False)
-            standard_hours.restaurant = restaurant
-            standard_hours.save()
-            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+    # Check if editing an existing standard hour
+    standard_hour_id = request.GET.get('edit') or request.POST.get('edit')
+    if standard_hour_id:
+        standard_hour = get_object_or_404(StandardHours, id=standard_hour_id)
     else:
-        form = StandardHoursForm()
+        standard_hour = None
+
+    if request.method == 'POST':
+        form = StandardHoursForm(request.POST, instance=standard_hour)
+        if form.is_valid():
+            # Check for duplicate hours
+            week_day = form.cleaned_data['week_day']
+            if not standard_hour or standard_hour.week_day != week_day:
+                duplicate_hours = StandardHours.objects.filter(
+                    restaurant=restaurant, week_day=week_day
+                ).exclude(id=standard_hour.id if standard_hour else None)
+
+                if duplicate_hours.exists():
+                    form.add_error('week_day', 'Standard hours for this day already exist.')
+                else:
+                    standard_hours = form.save(commit=False)
+                    standard_hours.restaurant = restaurant
+                    standard_hours.save()
+                    return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+            else:
+                standard_hours = form.save(commit=False)
+                standard_hours.restaurant = restaurant
+                standard_hours.save()
+                return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+        else:
+            print(form.errors)  # Debugging: Print form errors if invalid
+    else:
+        form = StandardHoursForm(instance=standard_hour)
 
     context = {
         'restaurant': restaurant,
@@ -230,18 +255,38 @@ def add_standard_hours(request, restaurant_slug):
 def add_custom_hours(request, restaurant_slug):
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
 
-    if not (Restaurant.objects.get(slug=restaurant_slug).manager == request.user or request.user.is_superuser):
+    if not (restaurant.manager == request.user or request.user.is_superuser):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
-    if request.method == 'POST':
-        form = CustomHoursForm(request.POST)
-        if form.is_valid():
-            custom_hours = form.save(commit=False)
-            custom_hours.restaurant = restaurant
-            custom_hours.save()
-            return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+    # Check if editing an existing custom hour
+    custom_hour_id = request.GET.get('edit') or request.POST.get('edit')
+    if custom_hour_id:
+        custom_hour = get_object_or_404(CustomHours, id=custom_hour_id, restaurant=restaurant)
     else:
-        form = CustomHoursForm()
+        custom_hour = None
+
+    if request.method == 'POST':
+        form = CustomHoursForm(request.POST, instance=custom_hour)
+        if form.is_valid():
+            # Check for duplicate hours
+            date = form.cleaned_data['date']
+            if not custom_hour or custom_hour.date != date:
+                if CustomHours.objects.filter(restaurant=restaurant, date=date).exists():
+                    form.add_error('date', 'Custom hours for this date already exist.')
+                else:
+                    custom_hours = form.save(commit=False)
+                    custom_hours.restaurant = restaurant
+                    custom_hours.save()
+                    return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+            else:
+                custom_hours = form.save(commit=False)
+                custom_hours.restaurant = restaurant
+                custom_hours.save()
+                return redirect('app:manage_restaurant', restaurant_slug=restaurant_slug)
+        else:
+            print(form.errors)  # Debugging: Print form errors if invalid
+    else:
+        form = CustomHoursForm(instance=custom_hour)
 
     context = {
         'restaurant': restaurant,
@@ -254,15 +299,40 @@ def add_custom_hours(request, restaurant_slug):
 def book_table(request, restaurant_slug):
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
 
-
     if request.method == 'POST':
         form = BookingForm(request.POST)
+        if not restaurant.bookings_allowed:
+            return HttpResponseForbidden("Bookings are not allowed for this restaurant.")
+
         if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user
-            booking.restaurant = restaurant
-            booking.save()
-            return redirect('app:show_restaurant', restaurant_slug=restaurant_slug)
+            booking_date = form.cleaned_data.get('date')
+            booking_time = form.cleaned_data.get('time')
+
+            # Validate booking date and time
+            if booking_date and booking_time:
+                # Check for custom hours on the booking date
+                custom_hours = CustomHours.objects.filter(restaurant=restaurant, date=booking_date).first()
+                if custom_hours:
+                    if not custom_hours.bookings_allowed or not (custom_hours.opening_time <= booking_time < custom_hours.closing_time):
+                        form.add_error(None, "The restaurant is closed at the selected time.")
+                else:
+                    # Check standard hours for the day of the week
+                    day_of_week = booking_date.strftime('%A')
+                    standard_hours = StandardHours.objects.filter(restaurant=restaurant, week_day=day_of_week).first()
+                    if not standard_hours or not standard_hours.bookings_allowed or not (standard_hours.opening_time <= booking_time < standard_hours.closing_time):
+                        form.add_error(None, "The restaurant is closed at the selected time.")
+            else:
+                form.add_error(None, "Please provide a valid date and time for the booking.")
+
+            # If no errors were added, save the booking
+            if not form.errors:
+                booking = form.save(commit=False)
+                booking.user = request.user
+                booking.restaurant = restaurant
+                booking.save()
+                return redirect('app:show_restaurant', restaurant_slug=restaurant_slug)
+        else:
+            print(form.errors)  # Debugging: Print form errors if invalid
     else:
         form = BookingForm()
 
@@ -356,13 +426,21 @@ def show_restaurant(request, restaurant_slug):
 
         context_dict['opening_times'] = opening_times
 
-
+        if restaurant.manager == request.user:
+            context_dict['site_manager'] = True
+        else:
+            context_dict['site_manager'] = False
 
 
 
         context_dict['opening_times'] = opening_times
 
         if request.method == 'POST' and request.user.is_authenticated:
+            if context_dict['site_manager']:
+                return redirect('app:show_restaurant', restaurant_slug=restaurant_slug)
+            
+
+
             form = ReviewForm(request.POST)
             if form.is_valid():
                 review = form.save(commit=False)
@@ -374,12 +452,10 @@ def show_restaurant(request, restaurant_slug):
         else:
             form = ReviewForm()
 
+
         context_dict['form'] = form
         context_dict['reviews'] = Review.objects.filter(restaurant=restaurant)
-        if restaurant.manager == request.user:
-            context_dict['site_manager'] = True
-        else:
-            context_dict['site_manager'] = False
+
 
     except Restaurant.DoesNotExist:
         pass

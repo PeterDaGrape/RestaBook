@@ -17,9 +17,9 @@
             <a href="{{ request.path }}manage">Manager edit</a>
         {% endif %}
     </div>
-
-    <a href="{{ request.path }}book_table">Book table</a>
-
+    {% if restaurant.bookings_allowed %}
+        <a href="{{ request.path }}book_table">Book table</a>
+    {% endif %}
     <h2>Opening Times</h2>
     <ul>
         {% for time in opening_times %}
