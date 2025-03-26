@@ -30,6 +30,9 @@ class Restaurant(models.Model):
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
 
+    bookings_allowed = models.BooleanField(default=True)
+
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Restaurant, self).save(*args, **kwargs)
@@ -96,6 +99,11 @@ class StandardHours(models.Model):
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     week_day = models.CharField(max_length=9, choices=DAYS_OF_WEEK)
+    
+    bookings_allowed = models.BooleanField(default=True)
+    class Meta:
+        unique_together = ('restaurant', 'week_day')  # Prevent duplicate hours for the same day per restaurant
+
     def __str__(self):
         return str(self.opening_time) + " - " + str(self.closing_time) + " " + str(self.week_day)
 
@@ -108,6 +116,10 @@ class CustomHours(models.Model):
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     date = models.DateField()
+    bookings_allowed = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('restaurant', 'date')  # Prevent duplicate hours for the same date per restaurant
 
     def __str__(self):
 

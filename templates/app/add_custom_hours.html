@@ -10,6 +10,9 @@
     <form method="post" action="{% url 'app:add_custom_hours' restaurant.slug %}">
         {% csrf_token %}
         {{ form.as_p }}
+        {% if request.GET.edit %}
+        <input type="hidden" name="edit" value="{{ request.GET.edit }}">
+    {% endif %}
         <input type="submit" value="Save Changes">
     </form>
 </div>
