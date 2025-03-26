@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from app.forms import UserProfileForm, UserForm, RestaurantForm, StandardHoursForm, CustomHoursForm, BookingForm, ReviewForm
-from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours, Review
+from app.models import Restaurant, Booking, CustomHours, Restaurant, StandardHours, Review, Cuisine
 from django.urls import reverse
 import datetime
 from django.contrib.auth.decorators import login_required
@@ -131,13 +131,46 @@ def about(request):
     return render(request, 'app/about.html', context=context_dict)
 
 def show_restaurants(request):
-    restaurant_list = Restaurant.objects.all()
-    print(restaurant_list)
-    context_dict = {}
-    context_dict['restaurants'] = restaurant_list
-    response = render(request, 'app/restaurants.html', context=context_dict)
-    return response
+    # Define sorting options
+    SORT_OPTIONS = {
+        'name': 'Name (A-Z)',
+        'rating': 'Rating (High to Low)',
+        'cuisine': 'Cuisine (A-Z)',
+    }
 
+    cuisines = Cuisine.objects.all()
+
+    FILTER_OPTIONS = {cuisine.name: cuisine.name for cuisine in cuisines}
+    FILTER_OPTIONS['None'] = 'None'
+    # Get query parameters for sorting and filtering
+    sort_by = request.GET.get('sort', 'name')  # Default sort by name
+    filter_only = request.GET.get('filter', None)
+
+    # Filter restaurants by cuisine if a filter is applied
+    restaurant_list = Restaurant.objects.all()
+
+    if filter_only != 'None' and filter_only in FILTER_OPTIONS:
+        print(filter_only)
+        restaurant_list = restaurant_list.filter(cuisine__name=filter_only)
+
+
+    # Sort restaurants based on the selected option
+    if sort_by == 'rating':
+        restaurant_list = sorted(restaurant_list, key=lambda r: r.calculate_average_stars(), reverse=True)
+    elif sort_by == 'cuisine':
+        restaurant_list = restaurant_list.order_by('cuisine__name')
+    else:  # Default to sorting by name
+        restaurant_list = restaurant_list.order_by('name')
+
+    context_dict = {
+        'restaurants': restaurant_list,
+        'current_sort': sort_by,
+        'current_filter': filter_only,
+        'filter_options': FILTER_OPTIONS,
+        'sort_options': SORT_OPTIONS,
+    }
+
+    return render(request, 'app/restaurants.html', context=context_dict)
 
 @login_required
 def manage_restaurant(request, restaurant_slug):
@@ -168,7 +201,6 @@ def manage_restaurant(request, restaurant_slug):
     }
 
     return render(request, 'app/manage_restaurant.html', context)
-
 
 @login_required
 def add_standard_hours(request, restaurant_slug):
