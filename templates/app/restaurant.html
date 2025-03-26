@@ -24,7 +24,7 @@
     <ul>
         {% for time in opening_times %}
             <li>
-                Day: {{ time.day_of_week }} - Time: {{ time.opening_time }} - {{ time.closing_time }}
+                {{ time.day_of_week }} - Time: {{ time.opening_time }} - {{ time.closing_time }}
             </li>
         {% endfor %}
     </ul>
@@ -33,7 +33,24 @@
         <h2>Reviews</h2>
         {% for review in reviews %}
             <li>
-                <strong>{{ review.user.username }}</strong> - {{ review.star_rating }} stars
+                <strong>{{ review.user.username }}</strong> - 
+                <strong>Rating: </strong>
+                {% if review.star_rating == 1 %}
+                    ⭐
+                {% endif %}
+                {% if review.star_rating == 2 %}
+                    ⭐⭐
+                {% endif %}
+                {% if review.star_rating == 3 %}
+                    ⭐⭐⭐
+                {% endif %}
+                {% if review.star_rating == 4 %}
+                    ⭐⭐⭐⭐
+                {% endif %}
+                {% if review.star_rating == 5 %}
+                    ⭐⭐⭐⭐⭐
+                {% endif %}
+                <br>
                 <p>{{ review.text }}</p>
                 <small>Reviewed on {{ review.review_date }}</small>
             </li>

@@ -35,7 +35,24 @@
             {% for review in reviews %}
                 <li>
                     <strong>Restaurant:</strong> {{ review.restaurant.name }}<br>
-                    <strong>Rating:</strong> {{ review.rating }} ⭐<br>
+                    <strong>Rating: </strong>
+                    {% if review.star_rating == 1 %}
+                        ⭐
+                    {% endif %}
+                    {% if review.star_rating == 2 %}
+                        ⭐⭐
+                    {% endif %}
+                    {% if review.star_rating == 3 %}
+                        ⭐⭐⭐
+                    {% endif %}
+                    {% if review.star_rating == 4 %}
+                        ⭐⭐⭐⭐
+                    {% endif %}
+                    {% if review.star_rating == 5 %}
+                        ⭐⭐⭐⭐⭐
+                    {% endif %}
+                    <br>
+
                     <strong>Comment:</strong> {{ review.comment }}<br>
                     <strong>Posted on:</strong> {{ review.review_date }}
                 </li>

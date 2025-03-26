@@ -319,6 +319,8 @@ def show_restaurant(request, restaurant_slug):
         context_dict['cuisine'] = restaurant.cuisine
         context_dict['email'] = restaurant.email
         context_dict['phone'] = restaurant.phone
+        context_dict['address'] = restaurant.address
+
 
         # Fetch standard and custom hours
         standard_hours = StandardHours.objects.filter(restaurant=restaurant)
@@ -394,6 +396,7 @@ def user_profile(request):
 
     # Fetch reviews made by the logged-in user
     user_reviews = Review.objects.filter(user=user).order_by('-review_date')
+    print(user_reviews)
 
     context = {
         'user': user,
