@@ -15,6 +15,9 @@ class Cuisine(models.Model):
     name = models.CharField(max_length=32)
     def __str__(self):
         return self.name
+    
+    def get_instance(name):
+        return Cuisine.objects.get_or_create(name=name)[0]
 
 class Restaurant(models.Model):
     cuisine = models.ForeignKey(Cuisine, on_delete=models.CASCADE)
@@ -48,7 +51,7 @@ class Restaurant(models.Model):
             if review_stars >= 0 and review_stars <= 5:
                 total += review_stars
         average = total / (i+1)
-        return average
+        return round(average, 1)
         
 
 class Booking(models.Model):
