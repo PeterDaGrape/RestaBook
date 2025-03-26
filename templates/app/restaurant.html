@@ -1,16 +1,9 @@
-{% extends 'app/base.html' %}
-
-{% block title_block %}
-    {{ name }}
-{% endblock %}
-
 {% block body_block %}
-
-    <h1> {{ name }}</h1>
-    Phone number: {{ phone }}
-    Email: {{ email }}
-    {% if address %}    
-        Address: {{ address }}
+    <h1>{{ name }}</h1>
+    <p>Phone number: {{ phone }}</p>
+    <p>Email: {{ email }}</p>
+    {% if address %}
+        <p>Address: {{ address }}</p>
     {% endif %}
 
     <div>
@@ -19,11 +12,19 @@
         {% endif %}
     </div>
 
-
     <a href="{{ request.path }}book_table">Book table</a>
 
+    <h2>Opening Times</h2>
+    <ul>
+        {% for time in opening_times %}
+            <li>
+                Day: {{ time.day_of_week }} - Time: {{ time.opening_time }} - {{ time.closing_time }}
+            </li>
+        {% endfor %}
+    </ul>
 
     {% if reviews %}
+        <h2>Reviews</h2>
         {% for review in reviews %}
             <li>
                 <strong>{{ review.user.username }}</strong> - {{ review.star_rating }} stars
@@ -31,27 +32,20 @@
                 <small>Reviewed on {{ review.review_date }}</small>
             </li>
         {% endfor %}
-        {% else %}
-        <li><strong>There are no reviews yet.</strong></li>
+    {% else %}
+        <p><strong>There are no reviews yet.</strong></p>
     {% endif %}
-
 
     {% if user.is_authenticated %}
-    <div class="form-container">
-        <h1 class="form-title"> Leave a review</h1>
-        <form method="post" action="{% url 'app:show_restaurant' restaurant.slug %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Save Changes">
-        </form>
-    </div>
+        <div class="form-container">
+            <h1 class="form-title">Leave a review</h1>
+            <form method="post" action="{% url 'app:show_restaurant' restaurant.slug %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Save Changes">
+            </form>
+        </div>
     {% else %}
-        Sign in to leave a review.
+        <p>Sign in to leave a review.</p>
     {% endif %}
-
-
-
-
-
-
 {% endblock %}

@@ -46,7 +46,132 @@ def populate():
         closing_time = datetime.time(hour=22,minute=30),
         week_day = "Friday"
     )
-    
+
+    # Additional standard hours for restaurant2
+    r2_st_hours = StandardHours.objects.create(
+        restaurant=restaurant2,
+        number_tables=15,
+        opening_time=datetime.time(hour=10, minute=0),
+        closing_time=datetime.time(hour=23, minute=0),
+        week_day="Saturday"
+    )
+
+    # Standard hours for each day of the week for restaurant1
+    StandardHours.objects.create(
+        restaurant=restaurant1,
+        number_tables=10,
+        opening_time=datetime.time(hour=9, minute=30),
+        closing_time=datetime.time(hour=22, minute=30),
+        week_day="Monday"
+    )
+    StandardHours.objects.create(
+        restaurant=restaurant1,
+        number_tables=10,
+        opening_time=datetime.time(hour=9, minute=30),
+        closing_time=datetime.time(hour=22, minute=30),
+        week_day="Tuesday"
+    )
+    StandardHours.objects.create(
+        restaurant=restaurant1,
+        number_tables=10,
+        opening_time=datetime.time(hour=9, minute=30),
+        closing_time=datetime.time(hour=22, minute=30),
+        week_day="Wednesday"
+    )
+    StandardHours.objects.create(
+        restaurant=restaurant1,
+        number_tables=10,
+        opening_time=datetime.time(hour=9, minute=30),
+        closing_time=datetime.time(hour=22, minute=30),
+        week_day="Thursday"
+    )
+    StandardHours.objects.create(
+        restaurant=restaurant1,
+        number_tables=10,
+        opening_time=datetime.time(hour=9, minute=30),
+        closing_time=datetime.time(hour=22, minute=30),
+        week_day="Saturday"
+    )
+    StandardHours.objects.create(
+        restaurant=restaurant1,
+        number_tables=10,
+        opening_time=datetime.time(hour=9, minute=30),
+        closing_time=datetime.time(hour=22, minute=30),
+        week_day="Sunday"
+    )
+
+    # Standard hours for each day of the week for restaurant2
+    for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"]:
+        StandardHours.objects.create(
+            restaurant=restaurant2,
+            number_tables=15,
+            opening_time=datetime.time(hour=10, minute=0),
+            closing_time=datetime.time(hour=23, minute=0),
+            week_day=day
+        )
+    StandardHours.objects.create(
+        restaurant=restaurant2,
+        number_tables=15,
+        opening_time=datetime.time(hour=10, minute=0),
+        closing_time=datetime.time(hour=23, minute=0),
+        week_day="Saturday"
+    )
+
+    # Custom hours for restaurant1
+    r1_custom_hours = CustomHours.objects.create(
+        restaurant=restaurant1,
+        date=datetime.date(2023, 12, 25),
+        opening_time=datetime.time(hour=12, minute=0),
+        closing_time=datetime.time(hour=20, minute=0),
+        number_tables=8
+    )
+
+    # Additional custom hours for the coming weeks
+    CustomHours.objects.create(
+        restaurant=restaurant1,
+        date=datetime.date(2023, 10, 20),
+        opening_time=datetime.time(hour=11, minute=0),
+        closing_time=datetime.time(hour=21, minute=0),
+        number_tables=8
+    )
+    CustomHours.objects.create(
+        restaurant=restaurant2,
+        date=datetime.date(2023, 10, 21),
+        opening_time=datetime.time(hour=12, minute=0),
+        closing_time=datetime.time(hour=22, minute=0),
+        number_tables=12
+    )
+
+    # Create reviews
+    review1 = Review.objects.create(
+        restaurant=restaurant1,
+        user=user1,
+        star_rating=5,
+        text="Amazing food and great service!",
+        review_date=datetime.date(2023, 10, 1)
+    )
+    review2 = Review.objects.create(
+        restaurant=restaurant2,
+        user=user2,
+        star_rating=4,
+        text="Delicious food but a bit crowded.",
+        review_date=datetime.date(2023, 10, 2)
+    )
+
+    # Create bookings
+    booking1 = Booking.objects.create(
+        restaurant=restaurant1,
+        user=user1,
+        date=datetime.date(2023, 10, 15),
+        time=datetime.time(hour=19, minute=0),
+    )
+    booking2 = Booking.objects.create(
+        restaurant=restaurant2,
+        user=user2,
+        date=datetime.date(2023, 10, 16),
+        time=datetime.time(hour=20, minute=0),
+    )
+
     print("Database populated with test data.")
 
 if __name__ == '__main__':

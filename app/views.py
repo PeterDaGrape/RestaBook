@@ -240,8 +240,43 @@ def book_table(request, restaurant_slug):
     }
 
     return render(request, 'app/book_table.html', context)
- 
- 
+
+def calculate_free_slots(hours, restaurant):
+    """
+    Calculate free slots for a given StandardHours or CustomHours object.
+    """
+    free_slots = []
+    current_time = hours.opening_time
+    while current_time < hours.closing_time:
+        # Count existing bookings for this time slot
+        bookings_count = Booking.objects.filter(
+            restaurant=restaurant,
+            date=datetime.date.today(),
+            time=current_time
+        ).count()
+
+        # Calculate free tables
+        free_tables = hours.number_tables - bookings_count
+        free_slots.append({
+            'time': current_time,
+            'free_tables': free_tables
+        })
+
+        # Increment time by 30 minutes
+        current_time = (datetime.datetime.combine(datetime.date.today(), current_time) +
+                        datetime.timedelta(minutes=30)).time()
+
+    return free_slots
+
+
+
+
+class opening_times_object:
+    def __init__(self, day_of_week, opening_time, closing_time):
+        self.day_of_week = day_of_week
+        self.opening_time = opening_time
+        self.closing_time = closing_time
+
 
 def show_restaurant(request, restaurant_slug):
     context_dict = {}
@@ -252,6 +287,46 @@ def show_restaurant(request, restaurant_slug):
         context_dict['cuisine'] = restaurant.cuisine
         context_dict['email'] = restaurant.email
         context_dict['phone'] = restaurant.phone
+
+        # Fetch standard and custom hours
+        standard_hours = StandardHours.objects.filter(restaurant=restaurant)
+        custom_hours = CustomHours.objects.filter(restaurant=restaurant)
+
+        # Calculate free bookings for each time slot
+
+        opening_times = []
+        today = datetime.date.today()
+
+ 
+        for i in range(7):
+            current_date = today + datetime.timedelta(days=i)
+            current_day = current_date.strftime('%A')  # Get the day of the week (e.g., 'Monday')
+
+            # Check if there are custom hours for the current date
+            custom_hour = custom_hours.filter(date=current_date).first()
+            if custom_hour:
+                opening_times.append(opening_times_object(
+                    day_of_week=current_date.strftime('%A'),
+                    opening_time=custom_hour.opening_time,
+                    closing_time=custom_hour.closing_time
+                ))
+            else:
+                # Check if there are standard hours for the current day
+                standard_hour = standard_hours.filter(week_day=current_day).first()
+                if standard_hour:
+                    opening_times.append(opening_times_object(
+                        day_of_week=current_date.strftime('%A'),
+                        opening_time=standard_hour.opening_time,
+                        closing_time=standard_hour.closing_time
+                    ))
+
+        context_dict['opening_times'] = opening_times
+
+
+
+
+
+        context_dict['opening_times'] = opening_times
 
         if request.method == 'POST' and request.user.is_authenticated:
             form = ReviewForm(request.POST)
@@ -265,7 +340,6 @@ def show_restaurant(request, restaurant_slug):
         else:
             form = ReviewForm()
 
-
         context_dict['form'] = form
         context_dict['reviews'] = Review.objects.filter(restaurant=restaurant)
         if restaurant.manager == request.user:
@@ -277,6 +351,7 @@ def show_restaurant(request, restaurant_slug):
         pass
 
     return render(request, 'app/restaurant.html', context=context_dict)
+
 
 @login_required
 def user_profile(request):
