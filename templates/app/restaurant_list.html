@@ -1,0 +1,13 @@
+<br>
+<strong>All restaurants</strong>
+<ul class="nav flex-column">
+  {% if restaurants %}
+    {% for restaurant in restaurants %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'app:show_restaurant' restaurant.slug %}">{{ restaurant.name }}</a>
+        </li>
+    {% endfor %}
+  {% else %}
+    <li><strong>There are no restaurants present.</strong></li>
+  {% endif %}
+</ul>
