@@ -16,4 +16,6 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('profile/', views.user_profile, name='profile'),
     path('search/', views.search_restaurants, name='search_restaurants'),
+    path('complete-booking/<int:booking_id>/', views.complete_booking, name='complete_booking'),
+    path('cancel-booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
 ]

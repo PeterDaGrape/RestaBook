@@ -498,3 +498,22 @@ def search_restaurants(request):
                         'query': query,
                         'results': results
                   })
+
+@login_required
+def complete_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+
+    if request.method == 'POST':
+        booking.is_completed = True
+        booking.save()
+
+    return redirect('app:profile')
+
+@login_required
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+
+    if request.method == 'POST' and not booking.is_completed:
+        booking.delete()
+    
+    return redirect('app:profile')
