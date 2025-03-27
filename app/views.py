@@ -146,8 +146,7 @@ def show_restaurants(request):
     FILTER_OPTIONS['None'] = 'None'
     # Get query parameters for sorting and filtering
     sort_by = request.GET.get('sort', 'name')  # Default sort by name
-    filter_only = request.GET.get('filter', None)
-    city = request.GET.get('city', '').strip()
+    filter_only = request.GET.get('filter', 'None')
 
     # Filter restaurants by cuisine if a filter is applied
     restaurant_list = Restaurant.objects.all()
