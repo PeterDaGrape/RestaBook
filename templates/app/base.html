@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load restaurant_tags %}
 <html>
     <head>
         {% load static %}
@@ -30,6 +31,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item"><a class="nav-link" href="{% url 'app:index' %}">Index</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'app:search_restaurants' %}">Search</a></li>
             {% if user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'app:profile' %}">Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'app:logout' %}">Logout</a></li>
@@ -45,9 +47,10 @@
 
     <div class="container-fluid">
         <div class="row">
-        <nav class="col-md-2d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky">
-            {% block sidebar_block %}                
+            {% block sidebar_block %}
+                {% get_restaurant_list %} 
             {% endblock %}
         </div>
         </nav>

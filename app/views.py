@@ -481,3 +481,15 @@ def user_profile(request):
     }
     
     return render(request, 'app/profile.html', context)
+
+def search_restaurants(request):
+    query = request.GET.get('q', '')
+    results = []
+
+    if query:
+        results = Restaurant.objects.filter(name__icontains=query)
+
+    return render(request, 'app/search.html', {
+                        'query': query,
+                        'results': results
+                  })

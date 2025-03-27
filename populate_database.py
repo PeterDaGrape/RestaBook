@@ -7,6 +7,8 @@ django.setup()
 from app.models import User, Cuisine, Restaurant, Booking, Review, StandardHours, CustomHours
 
 def populate():
+    User.objects.all().delete()
+
     # Create test users
     user1 = User.objects.create_user(username='john_doe', email='john@example.com', password='password', isManager=False)
     user2 = User.objects.create_user(username='jane_smith', email='jane@example.com', password='password', isManager=False)

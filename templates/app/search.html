@@ -1,0 +1,28 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title_block %}Search{% endblock %}
+
+{% block body_block %}
+    <h2>Search Restaurants</h2>
+
+    <form method="get" action="{% url 'app:search_restaurants' %}" class="mb-4">
+        <input type="text" name="q" value="{{ query }}" placeholder="Enter restaurant name" class="form-control w-50 d-inline">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    {% if query %}
+        <h2>Results for "{{ query }}":</h2>
+        {% if results %}
+            <ul>
+                {% for restaurant in results %}
+                    <li>
+                        <a href="{% url 'app:show_restaurant' restaurant.slug %}">{{ restaurant.name }}</a> - Average Rating: {{ restaurant.calculate_average_stars }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
