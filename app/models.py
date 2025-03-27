@@ -29,6 +29,8 @@ class Restaurant(models.Model):
     email = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
+    latitude = models.FloatField() #for maps
+    longitude = models.FloatField()
 
     bookings_allowed = models.BooleanField(default=True)
 
