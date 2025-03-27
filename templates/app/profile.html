@@ -18,7 +18,24 @@
                     <strong>Restaurant:</strong> {{ booking.restaurant.name }}<br>
                     <strong>Date:</strong> {{ booking.date }}<br>
                     <strong>Time:</strong> {{ booking.time }}<br>
-                    <strong>Guests:</strong> {{ booking.number_of_guests }}
+                    <strong>Guests:</strong> {{ booking.number_of_guests }}<br>
+                    <strong>Status:</strong>
+                    {% if booking.is_completed %}
+                        Completed
+                    {% else %}
+                        Not Completed
+
+                        <form method="post" action="{% url 'app:cancel_booking' booking.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Cancel Booking</button>
+                        </form>
+
+                        <form method="post" action="{% url 'app:complete_booking' booking.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success">Mark as Completed</button>
+                        </form>
+                    {% endif %}
+
                 </li>
                 <hr>
             {% endfor %}
