@@ -7,6 +7,8 @@ from django.urls import reverse
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render
+from .models import Restaurant, Cuisine
 
 
 def register(request):
@@ -145,6 +147,7 @@ def show_restaurants(request):
     # Get query parameters for sorting and filtering
     sort_by = request.GET.get('sort', 'name')  # Default sort by name
     filter_only = request.GET.get('filter', None)
+    city = request.GET.get('city', '').strip()
 
     # Filter restaurants by cuisine if a filter is applied
     restaurant_list = Restaurant.objects.all()
@@ -152,6 +155,9 @@ def show_restaurants(request):
     if filter_only != 'None' and filter_only in FILTER_OPTIONS:
         print(filter_only)
         restaurant_list = restaurant_list.filter(cuisine__name=filter_only)
+
+    if city:
+        restaurant_list = restaurant_list.filter(city__icontains=city)  # Case-insensitive search for city
 
 
     # Sort restaurants based on the selected option
@@ -171,6 +177,38 @@ def show_restaurants(request):
     }
 
     return render(request, 'app/restaurants.html', context=context_dict)
+
+def show_restaurante(request):
+    SORT_OPTIONS = {
+        'name': 'Name (A-Z)',
+        'rating': 'Rating (High to Low)',
+        'cuisine': 'Cuisine (A-Z)',
+    }
+
+    city = request.GET.get('city', '')
+
+    restaurant_list = Restaurant.objects.all()
+
+    # If city is provided, filter by city
+    if city:
+        restaurant_list = restaurant_list.filter(city__icontains=city)
+
+    # Sorting 
+    sort_by = request.GET.get('sort', 'name')
+    if sort_by == 'rating':
+        restaurant_list = sorted(restaurant_list, key=lambda r: r.calculate_average_stars(), reverse=True)
+    elif sort_by == 'cuisine':
+        restaurant_list = sorted(restaurant_list, key=lambda r: r.cuisine.name if r.cuisine else "")
+    else:
+        restaurant_list = sorted(restaurant_list, key=lambda r: r.name)
+
+    context_dict = {
+        'restaurants': restaurant_list,
+        'current_sort': sort_by,
+        'sort_options': SORT_OPTIONS,
+    }
+
+    return render(request, 'app/restaurants.html', context_dict)
 
 @login_required
 def manage_restaurant(request, restaurant_slug):

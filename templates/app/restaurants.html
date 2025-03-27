@@ -17,9 +17,6 @@
                 <option value="{{ key }}" {% if key == current_sort %}selected{% endif %}>{{ value }}</option>
             {% endfor %}
         </select>
-
-        <div id="map" style="width: 100%; height: 400px;"></div>
-
     
         <label for="sort">Filter:</label>
         <select name="filter" id="filter" onchange="this.form.submit()">
@@ -28,6 +25,10 @@
             {% endfor %}
         </select>
 
+        <label for="city">City:</label>
+        <input type="text" name="city" id="city" value="{{ request.GET.city }}" placeholder="Enter City">
+    
+        <button type="button" class="btn btn-dark">Filter by City</button>
     </form>
 
     <ul>
