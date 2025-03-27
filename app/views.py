@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
@@ -24,7 +25,7 @@ def register(request):
         profile_form = UserProfileForm(request.POST)
         # Check if username already exists
         username = request.POST.get('username')
-        if user.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             user_form.add_error('username', 'Username already exists')
         # If the two forms are valid...
         if user_form.is_valid() and profile_form.is_valid():
