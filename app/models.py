@@ -63,6 +63,7 @@ class Booking(models.Model):
 
     date = models.DateField()
     time = models.TimeField()
+    number_of_guests = models.IntegerField(default=1)
 
     def __str__(self):
         return self.user.username + " " + str(self.date) + " " + str(self.time)

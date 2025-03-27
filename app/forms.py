@@ -52,9 +52,16 @@ class BookingForm(forms.ModelForm):
 
 
 class BookingForm(forms.ModelForm):
+    GUEST_CHOICES = [(i, str(i)) for i in range(1, 21)]
+    number_of_guests = forms.ChoiceField(
+        choices=GUEST_CHOICES, 
+        label="Number of Guests",
+        required=True,
+        )
+
     class Meta:
         model = Booking
-        fields = ('date', 'time')
+        fields = ('date', 'time', 'number_of_guests')
         widgets = {
             'time': forms.TimeInput(attrs={'type': 'time'}),
             'date': forms.DateInput(attrs={'type': 'date'}),
