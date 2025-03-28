@@ -520,9 +520,19 @@ def search_restaurants(request):
     if query:
         results = Restaurant.objects.filter(name__icontains=query)
 
+    recent_restaurants = None
+    if request.user.is_authenticated:
+        recent_restaurants = (
+            Restaurant.objects
+            .filter(booking__user=request.user)
+            .distinct()
+            .order_by('-booking__date')[:5]
+        )
+
     return render(request, 'app/search.html', {
                         'query': query,
-                        'results': results
+                        'results': results,
+                        'recent_restaurants': recent_restaurants,
                   })
 
 @login_required
