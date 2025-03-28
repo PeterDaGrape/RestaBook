@@ -4,6 +4,20 @@
 {% block title_block %}Search{% endblock %}
 
 {% block body_block %}
+
+<style>
+    .undraw_hamburger_falh-container {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1;
+    }
+    </style>
+    
+    <div class="undraw_hamburger_falh-container">
+        <img src="{% static 'images/undraw_hamburger_falh.svg' %}" alt="Search Illustration" width="250">
+    </div>
+
     <h2>Search Restaurants</h2>
 
     <form method="get" action="{% url 'app:search_restaurants' %}" class="mb-4">
@@ -25,4 +39,16 @@
             <p>No results found.</p>
         {% endif %}
     {% endif %}
+
+    {% if recent_restaurants %}
+    <div class="mt-4">
+        <h5>Your Recent Restaurants</h5>
+        <ul>
+            {% for r in recent_restaurants %}
+                <li><a href="{% url 'app:show_restaurant' r.slug %}">{{ r.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
 {% endblock %}
