@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
     strengthIndicator.className = "password-strength";
 
     // calculate strength
-    let strength = 0;
+    let strength = 0; //check syntax for js
     if (password.length >= 8) {
       strength += 1;
     }
