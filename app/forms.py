@@ -67,7 +67,7 @@ class BookingForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
 
-# filepath: /Users/petervine/Developer/RestaBook/app/widgets.py
+
 from django import forms
 from django.utils.safestring import mark_safe
 
