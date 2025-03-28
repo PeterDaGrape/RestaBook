@@ -460,8 +460,11 @@ def show_restaurant(request, restaurant_slug):
 
 
         context_dict['form'] = form
-        context_dict['reviews'] = Review.objects.filter(restaurant=restaurant)
-
+        all_reviews = Review.objects.filter(restaurant=restaurant).order_by('-review_date')
+        paginator = Paginator(all_reviews, 3)
+        page_number = request.GET.get('page')
+        reviews_page = paginator.get_page(page_number)
+        context_dict['reviews'] = reviews_page
 
     except Restaurant.DoesNotExist:
         pass

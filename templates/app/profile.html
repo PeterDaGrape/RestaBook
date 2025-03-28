@@ -44,19 +44,38 @@
         <p>You have no bookings yet.</p>
     {% endif %}
 
-    <div class="pagination">
-        {% if bookings.has_previous %}
-            <a href="?booking_page=1">« First</a>
-            <a href="?booking_page={{ bookings.previous_page_number }}">‹ Prev</a>
-        {% endif %}
-    
-        Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
-    
-        {% if bookings.has_next %}
-            <a href="?booking_page={{ bookings.next_page_number }}">Next ›</a>
-            <a href="?booking_page={{ bookings.paginator.num_pages }}">Last »</a>
-        {% endif %}
-    </div>
+    <nav aria-label="Booking pagination">
+        <ul class="pagination justify-content-center">
+          {% if bookings.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?booking_page=1">&laquo;</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?booking_page={{ bookings.previous_page_number }}">&lsaquo;</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+          {% endif %}
+      
+          <li class="page-item disabled">
+            <span class="page-link">Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}</span>
+          </li>
+      
+          {% if bookings.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?booking_page={{ bookings.next_page_number }}">&rsaquo;</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?booking_page={{ bookings.paginator.num_pages }}">&raquo;</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+      
     
     
 
@@ -96,20 +115,38 @@
         <p>You have not reviewed any restaurants yet.</p>
     {% endif %}
 
-    <div class="pagination">
-        {% if reviews.has_previous %}
-            <a href="?review_page=1">« First</a>
-            <a href="?review_page={{ reviews.previous_page_number }}">‹ Prev</a>
-        {% endif %}
-    
-        Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}
-    
-        {% if reviews.has_next %}
-            <a href="?review_page={{ reviews.next_page_number }}">Next ›</a>
-            <a href="?review_page={{ reviews.paginator.num_pages }}">Last »</a>
-        {% endif %}
-    </div>
-
+    <nav aria-label="Review pagination">
+        <ul class="pagination justify-content-center">
+          {% if reviews.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?review_page=1">&laquo;</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?review_page={{ reviews.previous_page_number }}">&lsaquo;</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+          {% endif %}
+      
+          <li class="page-item disabled">
+            <span class="page-link">Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}</span>
+          </li>
+      
+          {% if reviews.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?review_page={{ reviews.next_page_number }}">&rsaquo;</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?review_page={{ reviews.paginator.num_pages }}">&raquo;</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+      
     <hr>
 
 {% endblock %}
