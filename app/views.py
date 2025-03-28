@@ -9,6 +9,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
+from .forms import AvatarUploadForm
 
 
 def register(request):
@@ -475,6 +476,13 @@ def show_restaurant(request, restaurant_slug):
 @login_required
 def user_profile(request):
     user = request.user
+
+    avatar_form = AvatarUploadForm(instance=request.user)
+    if request.method == 'POST':
+        avatar_form = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
+        if avatar_form.is_valid():
+            avatar_form.save()
+            return redirect('app:profile')
     
     # Fetch bookings for the logged-in user
     user_bookings = Booking.objects.filter(user=user).order_by('-date', '-time')
@@ -493,6 +501,7 @@ def user_profile(request):
     reviews = review_paginator.get_page(review_page_number)
 
     context = {
+        'avatar_form': avatar_form,
         'user': user,
         'bookings': bookings,
         'reviews': reviews,

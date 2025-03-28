@@ -1,10 +1,23 @@
 {% extends 'app/base.html' %}
+{% load static %}
 
 {% block title_block %}
     Your Profile
 {% endblock %}
 
 {% block body_block %}
+  {% if user.avatar and user.avatar.url %}
+    <img src="{{ user.avatar.url }}" alt="Avatar" width="100" class="rounded-circle mb-2">
+  {% else %}
+    <img src="{% static 'images/default-avatar.jpg' %}" alt="Avatar" width="100" class="rounded-circle mb-2">
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ avatar_form.as_p }}
+    <button type="submit" class="btn btn-sm btn-primary">Upload Avatar</button>
+  </form>
+
     <h1>Welcome, {{ user.username }}!</h1>
     <p>Email: {{ user.email }}</p>
 

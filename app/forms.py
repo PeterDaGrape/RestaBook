@@ -100,3 +100,8 @@ class ReviewForm(forms.ModelForm):
             'star_rating': StarRatingWidget(),
             'text': forms.Textarea(attrs={'rows': 4, 'cols': 40}),
         }
+
+class AvatarUploadForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['avatar']
