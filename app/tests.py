@@ -193,4 +193,23 @@ class UserFormsTests(TestCase):
         form = UserForm(data=data)
         self.assertFalse(form.is_valid())
  
- 
+class ViewUserBookingsTests(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(username='manager', password='password', isManager=True)
+        self.cuisine = Cuisine.objects.create(name='Italian')
+        self.restaurant = Restaurant.objects.create(
+            name='Test Restaurant',
+            email='test@example.com',
+            address='123 Test St',
+            phone='1234567890',
+            cuisine=self.cuisine,
+            manager=self.manager
+        )
+        self.user = User.objects.create_user(username='john', email='john@example.com', password='password')
+        self.booking = Booking.objects.create(
+            restaurant=self.restaurant,
+            user=self.user,
+            date='2025-04-01',
+            time='18:00'
+        )
+        self.client = Client()
