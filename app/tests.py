@@ -128,3 +128,69 @@ class AddCustomHoursViewTests(TestCase):
         })
         self.assertEqual(response.status_code, 302)  # Redirect after success
         self.assertEqual(CustomHours.objects.count(), 1)
+
+    def test_add_custom_hours_invalid(self):
+        self.client.login(username= 'manager', password='password')
+        response = self.client.post(reverse('app:add_custom_hours', args=[self.restaurant.slug]),
+        {'number_tables': '', #no # of tables added
+        'opening_time': '10:00',
+        'closing_time': '15:00',
+        'date': '2025-03-28',
+        'bookings_allowed': True
+        })
+        self.assertEqual(response.status_code, 200)  # Form re-rendered
+        self.assertContains(response, 'This field is required.')
+        self.assertEqual(CustomHours.objects.count(), 0)
+ 
+class BookingsViewTests(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(username='manager', password='password', isManager=True)
+        self.cuisine = Cuisine.objects.create(name='Italian')
+        self.restaurant = Restaurant.objects.create(
+            name='Test Restaurant',
+            email='test@example.com',
+            address='123 Test St',
+            phone='1234567890',
+            cuisine=self.cuisine,
+            manager=self.manager
+        )
+ 
+        booking_user = User.objects.create_user(username='John Doe', email='john@example.com')
+ 
+        self.booking = Booking.objects.create(
+            restaurant=self.restaurant,
+            user=booking_user,
+            date='2025-03-28',
+            time='12:00',
+        )
+ 
+        self.client = Client()
+ 
+    def test_view_bookings(self):
+        self.client.login(username='manager', password='password')
+        response = self.client.get(reverse('app:manage_restaurant', args=[self.restaurant.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'John Doe')
+        self.assertContains(response, '12:00')
+ 
+from app.forms import UserForm
+class UserFormsTests(TestCase):
+    def test_user_form_valid(self):
+        data = {
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password': 'newpassword123'
+        }
+        form = UserForm(data=data)
+        self.assertTrue(form.is_valid())
+ 
+    def test_user_form_invalid(self):
+        data = {
+            'username': '',  # missing username
+            'email': 'invalid-email',  # Invalid email format
+            'password': 'short'  # Password short
+        }
+        form = UserForm(data=data)
+        self.assertFalse(form.is_valid())
+ 
+ 
