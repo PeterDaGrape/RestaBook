@@ -40,3 +40,30 @@ a:hover {
     color: #ff5722;
 }
 
+.about-hero {
+    background: url('../images/about-bg.jpg') center/cover no-repeat;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.hero-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.about-content {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}

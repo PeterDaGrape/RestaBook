@@ -1,24 +1,52 @@
 {% extends 'app/base.html' %}
-{% load staticfiles %} <!-- New line -->
+{% load static %}
 
 {% block title_block %}
     About RestaBook
 {% endblock %}
 
-
 {% block body_block %}    
-    <div>
-        RestaBook is a platform that allows users to book tables at restaurants. 
-        <br>
-        <br>
-        It provides a user-friendly interface for searching and booking tables, as well as managing restaurant hours and adding custom hours. 
-        The platform also includes features such as user profiles and search functionality. 
-        <br>
-        <br>
-        We hope you enjoy using RestaBook! 
-        
-        <br />
 
+<!-- Hero Section -->
+<div class="about-hero">
+    <div class="hero-overlay">
+        <h1>Welcome to RestaBook</h1>
+        <p>Your ultimate restaurant booking experience</p>
     </div>
+</div>
+
+<!-- About Content -->
+<div class="container about-content">
+    <h2>Who We Are</h2>
+    <p>
+        RestaBook is your go-to platform for discovering and reserving tables at the best restaurants in town. 
+        We make dining out seamless and hassle-free.
+    </p>
+
+    <h2>Why Choose Us?</h2>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <img src="{% static 'images/easy-booking.png' %}" class="feature-icon img-fluid" style="max-width: 150px;" alt="Easy Booking">
+            <h4>Easy Booking</h4>
+            <p>Reserve your table in just a few clicks.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <img src="{% static 'images/user-friendly.png' %}" class="feature-icon img-fluid" style="max-width: 150px;" alt="User Friendly">
+            <h4>User Friendly</h4>
+            <p>Simple and intuitive design for everyone.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <img src="{% static 'images/reviews.png' %}" class="feature-icon img-fluid" style="max-width: 150px;" alt="Customer Reviews">
+            <h4>Verified Reviews</h4>
+            <p>See honest reviews from real diners.</p>
+        </div>
+    </div>
+
+    <h2>Join Us</h2>
+    <p>
+        Whether you're a foodie looking for new dining spots or a restaurant owner wanting to attract more customers, 
+        RestaBook is here for you. Start exploring today!
+    </p>
+</div>
 
 {% endblock %}
