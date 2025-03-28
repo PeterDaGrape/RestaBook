@@ -44,6 +44,22 @@
         <p>You have no bookings yet.</p>
     {% endif %}
 
+    <div class="pagination">
+        {% if bookings.has_previous %}
+            <a href="?booking_page=1">« First</a>
+            <a href="?booking_page={{ bookings.previous_page_number }}">‹ Prev</a>
+        {% endif %}
+    
+        Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
+    
+        {% if bookings.has_next %}
+            <a href="?booking_page={{ bookings.next_page_number }}">Next ›</a>
+            <a href="?booking_page={{ bookings.paginator.num_pages }}">Last »</a>
+        {% endif %}
+    </div>
+    
+    
+
     <hr>
 
     <h2>Your Reviews</h2>
@@ -79,6 +95,20 @@
     {% else %}
         <p>You have not reviewed any restaurants yet.</p>
     {% endif %}
+
+    <div class="pagination">
+        {% if reviews.has_previous %}
+            <a href="?review_page=1">« First</a>
+            <a href="?review_page={{ reviews.previous_page_number }}">‹ Prev</a>
+        {% endif %}
+    
+        Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}
+    
+        {% if reviews.has_next %}
+            <a href="?review_page={{ reviews.next_page_number }}">Next ›</a>
+            <a href="?review_page={{ reviews.paginator.num_pages }}">Last »</a>
+        {% endif %}
+    </div>
 
     <hr>
 

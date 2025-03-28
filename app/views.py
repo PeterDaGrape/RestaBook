@@ -8,6 +8,7 @@ from django.urls import reverse
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 
 
 def register(request):
@@ -475,14 +476,23 @@ def user_profile(request):
     # Fetch bookings for the logged-in user
     user_bookings = Booking.objects.filter(user=user).order_by('-date', '-time')
 
+    # Paging for bookings
+    booking_paginator = Paginator(user_bookings, 5)
+    booking_page_number = request.GET.get('booking_page')
+    bookings = booking_paginator.get_page(booking_page_number)
+
     # Fetch reviews made by the logged-in user
     user_reviews = Review.objects.filter(user=user).order_by('-review_date')
-    print(user_reviews)
+
+    #paging for reviews
+    review_paginator = Paginator(user_reviews, 3)
+    review_page_number = request.GET.get('review_page')
+    reviews = review_paginator.get_page(review_page_number)
 
     context = {
         'user': user,
-        'bookings': user_bookings,
-        'reviews': user_reviews
+        'bookings': bookings,
+        'reviews': reviews,
     }
     
     return render(request, 'app/profile.html', context)
