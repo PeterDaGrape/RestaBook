@@ -30,6 +30,9 @@ LOGIN_URL = '/app/login'
 
 # Application definition
 
+# In your settings.py file:
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -128,7 +131,7 @@ PASSWORD_HASHERS = (
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'app', 'static'),
 ]
 
 MEDIA_URL = '/media/'
