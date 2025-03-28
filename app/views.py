@@ -114,6 +114,10 @@ def index(request):
     sorted_restaurants = sorted(restaurant_list, key=lambda restaurant: restaurant.calculate_average_stars(), reverse=True)
     context_dict = {}
     context_dict['restaurants'] = sorted_restaurants
+
+    if request.user.is_authenticated:
+        booking_count = Booking.objects.filter(user=request.user).count()
+        context_dict['booking_count'] = booking_count
     response = render(request, 'app/index.html', context=context_dict)
     return response
 
