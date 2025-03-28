@@ -1,6 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from app.models import User, Restaurant, StandardHours, CustomHours, Booking, Cuisine
+from app.models import User, Restaurant, StandardHours, CustomHours, Booking, Cuisine, Review
+from app.forms import UserForm
+from datetime import date
+
+
 
 class ManageRestaurantViewTests(TestCase):
     def setUp(self):
@@ -173,7 +177,6 @@ class BookingsViewTests(TestCase):
         self.assertContains(response, 'John Doe')
         self.assertContains(response, '12:00')
  
-from app.forms import UserForm
 class UserFormsTests(TestCase):
     def test_user_form_valid(self):
         data = {
@@ -213,3 +216,46 @@ class ViewUserBookingsTests(TestCase):
             time='18:00'
         )
         self.client = Client()
+
+class RestaurantModelTest(TestCase):
+
+    def setUp(self):
+        #Set up test data for the restaurant and reviews.#
+        self.user = User.objects.create(username="testuser")
+        self.cuisine = Cuisine.objects.create(name="Italian")
+        self.restaurant = Restaurant.objects.create(
+            name="Test Restaurant",
+            cuisine=self.cuisine,
+            manager=self.user,
+            email="test@example.com",
+            address="123 Street",
+            phone="1234567890",
+        )
+
+    def test_calculate_average_stars_no_reviews(self):
+        #Test average when no reviews exist
+        self.assertIsNone(self.restaurant.calculate_average_stars())
+
+    def test_calculate_average_stars_single_review(self):
+        #Test average when there is one review.#
+        Review.objects.create(
+            user=self.user, restaurant=self.restaurant, star_rating=4, text="Good", review_date=date.today()
+        )
+        self.assertEqual(self.restaurant.calculate_average_stars(), 4.0)
+
+    def test_calculate_average_stars_multiple_reviews(self):
+        #Test average with multiple reviews.#
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=5, text="Excellent", review_date=date.today())
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=3, text="Average", review_date=date.today())
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=4, text="Good", review_date=date.today())
+
+        self.assertEqual(self.restaurant.calculate_average_stars(), 4.0)  # (5+3+4)/3 = 4.0
+
+    def test_calculate_average_stars_with_invalid_ratings(self):
+        #Ensure only valid ratings (0-5) are considered.#
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=5, text="Perfect", review_date=date.today())
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=3, text="Okay", review_date=date.today())
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=-1, text="Invalid", review_date=date.today())  # Should be ignored
+        Review.objects.create(user=self.user, restaurant=self.restaurant, star_rating=6, text="Too high", review_date=date.today())  # Should be ignored
+
+        self.assertEqual(self.restaurant.calculate_average_stars(), 4.0)  # (5+3)/2 = 4.0
