@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
 from .forms import AvatarUploadForm
-
+from django.contrib.auth import get_user_model
 
 def register(request):
     # A boolean value for telling the template
@@ -18,6 +18,7 @@ def register(request):
     # Set to False initially. Code changes value to
     # True when registration succeeds.
     registered = False
+    User = get_user_model()  # Use the custom User model
 
     # If it's a HTTP POST, we're interested in processing form data.
     if request.method == 'POST':
