@@ -102,3 +102,29 @@ class ManageRestaurantViewTests(TestCase):
         custom_hour = CustomHours.objects.first()
         self.assertEqual(custom_hour.restaurant, self.restaurant)
         self.assertEqual(custom_hour.date.strftime('%Y-%m-%d'), '2025-03-28')
+
+class AddCustomHoursViewTests(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(username='manager', password='password', isManager=True)
+        self.cuisine = Cuisine.objects.create(name='Italian')
+        self.restaurant = Restaurant.objects.create(
+            name='Test Restaurant',
+            email='test@example.com',
+            address='123 Test St',
+            phone='1234567890',
+            cuisine=self.cuisine,
+            manager=self.manager
+        )
+        self.client = Client()
+ 
+    def test_add_custom_hours_success(self):
+        self.client.login(username='manager', password='password')
+        response = self.client.post(reverse('app:add_custom_hours', args=[self.restaurant.slug]), {
+            'number_tables': 5,
+            'opening_time': '10:00',
+            'closing_time': '15:00',
+            'date': '2025-03-28',
+            'bookings_allowed': True
+        })
+        self.assertEqual(response.status_code, 302)  # Redirect after success
+        self.assertEqual(CustomHours.objects.count(), 1)
