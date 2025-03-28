@@ -1,3 +1,4 @@
+/* global document */
 document.addEventListener("DOMContentLoaded", function () {
   const forms = document.querySelectorAll("form");
   forms.forEach(function (form) {
@@ -6,13 +7,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     inputs.forEach(function (input) {
       input.addEventListener("blur", function () {
-        validateField(this);
+        validateField(input);
       });
 
       // check password strength
       if (input.type === "password") {
         input.addEventListener("keyup", function () {
-          checkPasswordStrength(this);
+          checkPasswordStrength(input);
         });
       }
     });
@@ -96,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // display general error
   function displayFormError(message) {
-    const errorContainer = 
+    const errorContainer =
       document.getElementById("form-errors") || createErrorContainer();
     errorContainer.textContent = message;
     errorContainer.style.display = "block";
@@ -132,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     strengthIndicator.className = "password-strength";
 
     // calculate strength
-    let strength = 0; //check syntax for js
+    let strength = 0; //syntax for js
     if (password.length >= 8) {
       strength += 1;
     }
